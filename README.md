@@ -134,34 +134,36 @@ Every simulated payment — approved or rejected — produces a receipt signed w
 The private key (`receipt/private_key.pem`) is generated locally on first use and never leaves your machine — it's excluded from version control via `.gitignore`. Only the public key is needed to verify a receipt.
 
 ## Project structure
+
+```
 agent-paylab/
 ├── core/
-│ ├── cli.py # command-line entry point (all commands)
-│ ├── router.py # choose_and_pay(), choose_best_offer()
-│ ├── negotiation.py # Seller class (expected-value based), negotiate()
-│ ├── calibration.py # scipy-based calibration of negotiation parameters
-│ ├── buyer.py # negotiate_and_choose() - deterministic + AI pipeline
-│ └── ai_agent.py # experimental LLM-based decision engine
+│   ├── cli.py            # command-line entry point (all commands)
+│   ├── router.py         # choose_and_pay(), choose_best_offer()
+│   ├── negotiation.py    # Seller class (expected-value based), negotiate()
+│   ├── calibration.py    # scipy-based calibration of negotiation parameters
+│   ├── buyer.py          # negotiate_and_choose() - deterministic + AI pipeline
+│   └── ai_agent.py       # experimental LLM-based decision engine
 ├── protocols/
-│ ├── x402/mock.py
-│ ├── ap2/mock.py
-│ ├── mpp/mock.py
-│ ├── visatap/mock.py
-│ ├── mastercardpay/mock.py
-│ └── payforcrawl/mock.py
+│   ├── x402/mock.py
+│   ├── ap2/mock.py
+│   ├── mpp/mock.py
+│   ├── visatap/mock.py
+│   ├── mastercardpay/mock.py
+│   └── payforcrawl/mock.py
 ├── receipt/
-│ ├── generator.py
-│ └── keys.py
+│   ├── generator.py
+│   └── keys.py
 ├── tests/
 │   ├── test_receipt.py       # Ed25519 signing/verification
 │   ├── test_negotiation.py   # expected-value engine, win probability, Seller
 │   ├── test_calibration.py   # scipy-based parameter calibration
-│   └── test_router.py        # protocol selection, offer comparison, error Handling
+│   └── test_router.py        # protocol selection, offer comparison, error handling
 ├── examples/
-│ ├── generate_sellers.py # generate random seller pools for scale testing
-│ └── ai_demo.py # standalone ai_agent.py demo
+│   ├── generate_sellers.py   # generate random seller pools for scale testing
+│   └── ai_demo.py            # standalone ai_agent.py demo
 └── pyproject.toml
-
+```
 ## Testing
 
 ```bash
