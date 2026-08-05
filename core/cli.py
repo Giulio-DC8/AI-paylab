@@ -6,6 +6,8 @@ from protocols.mpp.mock import pay as pay_mpp
 from protocols.visatap.mock import pay as pay_visatap
 from protocols.mastercardpay.mock import pay as pay_mastercardpay
 from protocols.payforcrawl.mock import pay as pay_payforcrawl
+from protocols.lightning_l402.mock import pay_per_request
+from protocols.web_monetization.mock import pay_stream
 from receipt.generator import create_receipt
 from core.router import choose_and_pay, choose_best_offer
 from core.negotiation import Seller, negotiate
@@ -22,6 +24,16 @@ def print_result(result):
         print(f"Agent Credential:{result['agent_credential']}")
     if "zone" in result:
         print(f"Zone:            {result['zone']}")
+    if "macaroon" in result:
+        print(f"Macaroon:        {result['macaroon']}")
+    if "cost_per_request" in result:
+        print(f"Cost/request:    {result['cost_per_request']}")
+    if "request_count" in result:
+        print(f"Request count:   {result['request_count']}")
+    if "rate_per_second" in result:
+        print(f"Rate/second:     {result['rate_per_second']}")
+    if "duration_seconds" in result:
+        print(f"Duration (s):    {result['duration_seconds']}")
     print(f"Merchant:        {result['merchant']}")
     print(f"Amount:          {result['amount']}")
     if "currency" in result:
@@ -70,6 +82,14 @@ def main():
     buy_parser.add_argument("--preferences", default="the lowest price", help="Buyer preferences, in natural language")
     buy_parser.add_argument("--top-n", type=int, default=5, help="How many finalists to pass to the AI (default: 5)")
     buy_parser.add_argument("--max-rounds", type=int, default=30, help="Maximum negotiation rounds (default: 30)")
+
+    stream_parser = subparsers.add_parser("stream", help="Simulate a per-request or continuous-streaming payment (Lightning L402 / Web Monetization)")
+    stream_parser.add_argument("--protocol", required=True, choices=["lightning_l402", "web_monetization"], help="Which streaming/per-request protocol to use")
+    stream_parser.add_argument("--merchant", default="TestMerchant", help="Merchant name")
+    stream_parser.add_argument("--cost-per-request", type=float, default=0.0001, help="[lightning_l402] price per single request")
+    stream_parser.add_argument("--request-count", type=int, default=1000, help="[lightning_l402] number of requests in this batch")
+    stream_parser.add_argument("--rate-per-second", type=float, default=0.001, help="[web_monetization] micropayment rate per second")
+    stream_parser.add_argument("--duration-seconds", type=float, default=30.0, help="[web_monetization] how long the stream ran for")
 
     args = parser.parse_args()
 
@@ -159,6 +179,22 @@ def main():
         print("--- Final choice (AI) ---")
         print(f"Merchant:    {result['chosen_merchant']}")
         print(f"Reasoning:   {result['reasoning']}")
+
+    elif args.command == "stream":
+        if args.protocol == "lightning_l402":
+            result = pay_per_request(
+                merchant=args.merchant,
+                cost_per_request=args.cost_per_request,
+                request_count=args.request_count,
+            )
+        elif args.protocol == "web_monetization":
+            result = pay_stream(
+                merchant=args.merchant,
+                rate_per_second=args.rate_per_second,
+                duration_seconds=args.duration_seconds,
+            )
+
+        print_result(result)
 
     else:
         parser.print_help()

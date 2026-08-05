@@ -82,6 +82,7 @@ Every payment simulation produces a **receipt signed with Ed25519** (real public
 | `paylab compare --offers file.json` | Compare multiple seller/protocol offers, pick the lowest total cost (price + fee) |
 | `paylab negotiate --sellers file.json [--max-rounds N]` | Run a multi-round negotiation between sellers, each maximizing expected value at every round (default: 5 rounds) |
 | `paylab negotiate-and-choose --sellers file.json --preferences "..." [--top-n N] [--max-rounds N]` | Negotiate across all sellers deterministically, then let an LLM choose among the top N finalists based on natural-language preferences |
+| `paylab stream --protocol X --merchant M ...` | Simulate a per-request (Lightning L402) or continuous-streaming (Web Monetization) micropayment |
 
 ## Negotiation model
 
@@ -114,6 +115,8 @@ Grounded in real pricing theory (Blythe, *Fondamenti di Marketing*, 2013, ch. 7;
 
 ## Protocols supported (all mocked)
 
+Six single-transaction ("one-shot") protocols:
+
 | Protocol | What it represents | Notable field |
 |---|---|---|
 | `x402` | Direct payment rail over HTTP 402 (stablecoin-native) | — |
@@ -123,7 +126,14 @@ Grounded in real pricing theory (Blythe, *Fondamenti di Marketing*, 2013, ch. 7;
 | `payforcrawl` | Cloudflare Pay per Crawl — access to content/resources, not e-commerce | `zone` |
 | `ap2` | Authorization framework (mandate-based), not an execution rail | `mandate_id` |
 
-**Design note:** every mock captures only the core mechanic of the real protocol it represents, not the full specification. `x402`, `mpp`, `visatap`, `mastercardpay`, and `payforcrawl` are treated here as interchangeable execution rails for simplicity; in reality some of them (e.g. Visa card payments) are implemented as *methods within* MPP rather than fully separate protocols. `ap2` is currently exposed as a peer protocol in `simulate` for consistency, even though conceptually it authorizes a payment rather than executing one — it's excluded from `auto` and `compare` for that reason. A cleaner `paylab authorize` step is planned (see Roadmap).
+Plus two per-unit / continuous-streaming protocols, conceptually different from the six above (no single fixed amount — cost accumulates per request or per second):
+
+| Protocol | What it represents | Command |
+|---|---|---|
+| `lightning_l402` | Lightning Network L402: per-request micropayments bundling auth + payment via a macaroon token | `paylab stream --protocol lightning_l402 --cost-per-request 0.0001 --request-count 1000` |
+| `web_monetization` | W3C Web Monetization / Interledger Protocol: continuous background payment stream while a resource is consumed | `paylab stream --protocol web_monetization --rate-per-second 0.001 --duration-seconds 30` |
+
+**Design note:** every mock captures only the core mechanic of the real protocol it represents, not the full specification. `x402`, `mpp`, `visatap`, `mastercardpay`, and `payforcrawl` are treated here as interchangeable execution rails for simplicity; in reality some of them (e.g. Visa card payments) are implemented as *methods within* MPP rather than fully separate protocols. `ap2` is currently exposed as a peer protocol in `simulate` for consistency, even though conceptually it authorizes a payment rather than executing one — it's excluded from `auto` and `compare` for that reason. `lightning_l402` and `web_monetization` are kept separate from `simulate`/`auto`/`compare`/`negotiate` on purpose: those commands assume a single fixed `amount`, while streaming protocols accumulate cost over requests or time — a genuinely different interface, not just another protocol name. A cleaner `paylab authorize` step for `ap2` is planned (see Roadmap).
 
 ## Receipts
 
@@ -144,13 +154,15 @@ agent-paylab/
 │   ├── calibration.py    # scipy-based calibration of negotiation parameters
 │   ├── buyer.py          # negotiate_and_choose() - deterministic + AI pipeline
 │   └── ai_agent.py       # experimental LLM-based decision engine
-├── protocols/
+├├── protocols/
 │   ├── x402/mock.py
 │   ├── ap2/mock.py
 │   ├── mpp/mock.py
 │   ├── visatap/mock.py
 │   ├── mastercardpay/mock.py
-│   └── payforcrawl/mock.py
+│   ├── payforcrawl/mock.py
+│   ├── lightning_l402/mock.py     # per-request payments
+│   └── web_monetization/mock.py   # continuous streaming payments
 ├── receipt/
 │   ├── generator.py
 │   └── keys.py
@@ -171,7 +183,8 @@ pip install pytest
 pytest tests/ -v
 ```
 
-13 tests covering receipt signing, the expected-value negotiation engine, parameter calibration, and protocol routing/error handling.
+19 tests covering receipt signing, the expected-value negotiation engine, parameter calibration, protocol routing/error handling, and per-unit/streaming payments.
+
 ## Roadmap
 
 - Redefine `ap2` as a separate authorization step (`paylab authorize`) that produces a mandate, consumed by `auto`/`compare`/`negotiate` — instead of listing it as a peer execution protocol
