@@ -83,6 +83,7 @@ Every payment simulation produces a **receipt signed with Ed25519** (real public
 | `paylab negotiate --sellers file.json [--max-rounds N]` | Run a multi-round negotiation between sellers, each maximizing expected value at every round (default: 5 rounds) |
 | `paylab negotiate-and-choose --sellers file.json --preferences "..." [--top-n N] [--max-rounds N]` | Negotiate across all sellers deterministically, then let an LLM choose among the top N finalists based on natural-language preferences |
 | `paylab stream --protocol X --merchant M ...` | Simulate a per-request (Lightning L402) or continuous-streaming (Web Monetization) micropayment |
+| `paylab check-access --merchant M ...` | Check API key/quota access (traditional pre-paid credential model — no real-time negotiation, only a validity/credit check) |
 
 ## Negotiation model
 
@@ -135,6 +136,12 @@ Plus two per-unit / continuous-streaming protocols, conceptually different from 
 | `lightning_l402` | Lightning Network L402: per-request micropayments bundling auth + payment via a macaroon token | `paylab stream --protocol lightning_l402 --cost-per-request 0.0001 --request-count 1000` |
 | `web_monetization` | W3C Web Monetization / Interledger Protocol: continuous background payment stream while a resource is consumed | `paylab stream --protocol web_monetization --rate-per-second 0.001 --duration-seconds 30` |
 
+Plus one traditional pre-paid access-control model, conceptually different from both categories above (payment already happened out-of-band — the request only checks validity/credit, it never negotiates or decides anything):
+
+| Protocol | What it represents | Command |
+|---|---|---|
+| `api_key_quota` | Traditional API Key / OAuth model: account and credit set up beforehand; each request just checks key validity, remaining credit, and rate limits (HTTP 200/401/403/429) | `paylab check-access --merchant WeatherAPI --credit-balance 10.0 --request-cost 0.01` |
+
 **Design note:** every mock captures only the core mechanic of the real protocol it represents, not the full specification. `x402`, `mpp`, `visatap`, `mastercardpay`, and `payforcrawl` are treated here as interchangeable execution rails for simplicity; in reality some of them (e.g. Visa card payments) are implemented as *methods within* MPP rather than fully separate protocols. `ap2` is currently exposed as a peer protocol in `simulate` for consistency, even though conceptually it authorizes a payment rather than executing one — it's excluded from `auto` and `compare` for that reason. `lightning_l402` and `web_monetization` are kept separate from `simulate`/`auto`/`compare`/`negotiate` on purpose: those commands assume a single fixed `amount`, while streaming protocols accumulate cost over requests or time — a genuinely different interface, not just another protocol name. A cleaner `paylab authorize` step for `ap2` is planned (see Roadmap).
 
 ## Receipts
@@ -185,7 +192,7 @@ pip install pytest
 pytest tests/ -v
 ```
 
-19 tests covering receipt signing, the expected-value negotiation engine, parameter calibration, protocol routing/error handling, and per-unit/streaming payments.
+25 tests covering receipt signing, the expected-value negotiation engine, parameter calibration, protocol routing/error handling, per-unit/streaming payments, rate-based negotiation, and traditional API key/quota access control.
 
 ## Roadmap
 
