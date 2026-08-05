@@ -64,7 +64,7 @@ class Seller:
     def __init__(self, name, starting_price, min_margin=0.1, strategy="standard"):
         self.name = name
         self.current_price = starting_price
-        self.min_price = round(starting_price * (1 - min_margin), 2)
+        self.min_price = round(starting_price * (1 - min_margin), 8)
         self.strategy = strategy
         self.price_elasticity_belief = STRATEGY_PRICE_ELASTICITY_BELIEF.get(strategy, 5.0)
 
@@ -89,7 +89,7 @@ class Seller:
         steps = 20
         price_range = self.current_price - self.min_price
         for i in range(1, steps + 1):
-            candidate = round(self.current_price - price_range * i / steps, 2)
+            candidate = round(self.current_price - price_range * i / steps, 8)
             candidate_ev = expected_value(
                 candidate, competitor_price, self.min_price, self.price_elasticity_belief
             )

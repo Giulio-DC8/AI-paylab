@@ -103,6 +103,8 @@ Grounded in real pricing theory (Blythe, *Fondamenti di Marketing*, 2013, ch. 7;
 
 **A note on `--max-rounds`:** the default (5) is enough for small scenarios (2-3 sellers), but with more participants — especially several using `"penetration"` — the negotiation may still be actively converging when the round limit cuts it off. At 15 sellers with 5 rounds, two aggressive sellers were still chasing each other's price down; raising `--max-rounds` to 30 showed they stabilize on their own around round 7 (a genuine price war settling, once neither can improve further), the cutoff, not an unresolved conflict, was why it looked unfinished at the default.
 
+**Rate-based negotiation:** the engine is agnostic to what the price represents, the same `Seller`/`negotiate()` used for total prices (e.g. 900) works identically for per-request or per-second rates (e.g. 0.00012), since the math only cares about the relative price gap, not the absolute scale. This means `lightning_l402` and `web_monetization` sellers can negotiate against each other using the exact same `paylab negotiate --sellers rate_sellers.json` command, no new code required. One real bug surfaced when testing this at rate scale: `min_price` and candidate prices were rounded to 2 decimal places, which silently collapsed tiny rates (e.g. 0.00012) to zero, blocking any discount. Fixed by rounding to 8 decimals instead, no change for normal-scale prices. One-shot and rate-based sellers aren't mixed in the same negotiation (comparing a fixed total against a per-unit rate would require an assumed volume to convert one into the other), see Roadmap.
+
 ## AI-assisted decisions (experimental)
 
 `core/ai_agent.py` (Gemini API) shows an alternative to the deterministic engine: a seller and a buyer that reason about the same kind of decision in natural language instead of computing expected value or comparing raw totals. `core/buyer.py` (`negotiate_and_choose()`) wires this into the main pipeline: it runs the deterministic negotiation across *all* sellers first (free, fast, scales to hundreds), then hands only the top N finalists to the AI for a final decision — instead of calling an LLM once per seller, which would be slow, costly, and unnecessary since the price-based part is already handled deterministically. Run `python examples/ai_demo.py` (requires `GEMINI_API_KEY`) for a standalone look at the seller/buyer reasoning, or use `paylab negotiate-and-choose` for the full pipeline.
@@ -193,6 +195,7 @@ pytest tests/ -v
 - Risk preference: expected value currently assumes risk neutrality (`probability × margin`); a `probability^alpha × margin^beta` formulation would let sellers be modeled as risk-averse, aggressive, or market-share-driven
 - Multi-step / non-myopic negotiation (agents that reason about future rounds, not just the current one)
 - Time-value of waiting (a seller might prefer a smaller profit now over a larger one later)
+- Cross-negotiation between one-shot and rate-based sellers (e.g. comparing a fixed flight price against a per-request API rate), would require an assumed request/time volume to convert a rate into a comparable total
 
 ## License
 

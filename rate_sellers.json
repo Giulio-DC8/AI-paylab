@@ -1,0 +1,5 @@
+[
+  {"name": "APIProviderA", "starting_price": 0.00015, "min_margin": 0.2, "strategy": "skimming"},
+  {"name": "APIProviderB", "starting_price": 0.00012, "min_margin": 0.15, "strategy": "penetration"},
+  {"name": "APIProviderC", "starting_price": 0.00018, "min_margin": 0.25, "strategy": "standard"}
+]
