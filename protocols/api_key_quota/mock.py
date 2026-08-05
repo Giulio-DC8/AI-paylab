@@ -52,7 +52,7 @@ def check_access(merchant, api_key_valid=True, credit_balance=10.0, request_cost
         "protocol": "api_key_quota",
         "merchant": merchant,
         "http_status_code": http_status_code,
-	"amount": request_cost,
+        "amount": request_cost,
         "request_cost": request_cost,
         "remaining_credit": round(credit_balance - request_cost, 4) if status == "APPROVED" else round(credit_balance, 4),
         "status": status,

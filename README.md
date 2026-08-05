@@ -171,15 +171,19 @@ agent-paylab/
 │   ├── mastercardpay/mock.py
 │   ├── payforcrawl/mock.py
 │   ├── lightning_l402/mock.py     # per-request payments
-│   └── web_monetization/mock.py   # continuous streaming payments
+│   ├── web_monetization/mock.py   # continuous streaming payments
+│   └── api_key_quota/mock.py      # traditional pre-paid API key/quota access
 ├── receipt/
 │   ├── generator.py
 │   └── keys.py
 ├── tests/
-│   ├── test_receipt.py       # Ed25519 signing/verification
-│   ├── test_negotiation.py   # expected-value engine, win probability, Seller
-│   ├── test_calibration.py   # scipy-based parameter calibration
-│   └── test_router.py        # protocol selection, offer comparison, error handling
+│   ├── test_receipt.py             # Ed25519 signing/verification
+│   ├── test_negotiation.py         # expected-value engine, win probability, Seller
+│   ├── test_calibration.py         # scipy-based parameter calibration
+│   ├── test_router.py              # protocol selection, offer comparison, error handling
+│   ├── test_rate_negotiation.py    # negotiation engine at per-request/per-second rate scale
+│   ├── test_streaming_protocols.py # lightning_l402, web_monetization
+│   └── test_api_key_quota.py       # api_key_quota (HTTP 200/401/403/429)
 ├── examples/
 │   ├── generate_sellers.py   # generate random seller pools for scale testing
 │   └── ai_demo.py            # standalone ai_agent.py demo
