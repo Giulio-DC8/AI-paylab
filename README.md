@@ -1,6 +1,6 @@
 # AI-paylab 
 
-**Agent-paylab is a local sandbox for prototyping how AI agents pay.** Simulate, compare, and negotiate payments across multiple agentic payment protocols — no real accounts, no API keys, no network calls.
+**Agent-paylab is a local sandbox for prototyping how AI agents pay.** Simulate, compare, and negotiate payments across multiple agentic payment protocols, no real accounts, no API keys, no network calls.
 
 ## See it in action
 
@@ -15,11 +15,11 @@ Round 2: {'Lufthansa': 900, 'Emirates': 878.75}
 
 Two sellers, two independent pricing strategies, negotiating by weighing expected value — probability of winning × remaining margin — at every candidate price, instead of applying a fixed discount step. Tested up to 350 sellers negotiating at once (see below). This is the part most payment protocol demos don't show: not *how* an agent pays, but *how it decides who to pay*.
 
-`agent-paylab` doesn't compete with x402, AP2, MPP, or any other payment protocol. It's a development tool: a place to prototype the *logic* of an agent that pays — protocol selection, offer comparison, price negotiation, tamper-evident receipts — before wiring anything to a real rail.
+`agent-paylab` doesn't compete with x402, AP2, MPP, or any other payment protocol. It's a development tool: a place to prototype the *logic* of an agent that pays, protocol selection, offer comparison, price negotiation, tamper-evident receipts, before wiring anything to a real rail.
 
 ## Why
 
-Agentic payment protocols are still fragmented and evolving fast. Testing an agent's payment logic against real infrastructure means real accounts, real keys, and real (if small) money. `agent-paylab` removes that friction entirely — every protocol is mocked, every transaction is local, every receipt is cryptographically real.
+Agentic payment protocols are still fragmented and evolving fast. Testing an agent's payment logic against real infrastructure means real accounts, real keys, and real (if small) money. `agent-paylab` removes that friction entirely, every protocol is mocked, every transaction is local, every receipt is cryptographically real.
 
 ## Install
 
@@ -71,7 +71,7 @@ paylab negotiate-and-choose --sellers sellers_350.json --preferences "prefer sta
 ```
 Requires `GEMINI_API_KEY` set in your environment.
 
-Every payment simulation produces a **receipt signed with Ed25519** (real public/private key cryptography, not a bare hash) — tamper with any field after signing, and verification fails.
+Every payment simulation produces a **receipt signed with Ed25519** (real public/private key cryptography, not a bare hash), tamper with any field after signing, and verification fails.
 
 ## Commands
 
@@ -98,15 +98,15 @@ probability at a 5% gap (skimming=40%, standard=25%, penetration=10%), it uses
 
 Grounded in real pricing theory (Blythe, *Fondamenti di Marketing*, 2013, ch. 7; LIUC pricing strategy lecture notes) rather than arbitrary rules: `skimming` mirrors market-skimming (patient, protects margin), `penetration` mirrors penetration pricing (aggressive, chases market share, at the real-world risk of a price war if a competitor matches it).
 
-**Scale-tested:** negotiation was tested with 2, 15, and 350 sellers (`examples/generate_sellers.py` generates random seller pools with a fixed seed for reproducibility). It scales without performance issues — 350 sellers converge naturally around round 10, with no code changes needed.
+**Scale-tested:** negotiation was tested with 2, 15, and 350 sellers (`examples/generate_sellers.py` generates random seller pools with a fixed seed for reproducibility). It scales without performance issues, 350 sellers converge naturally around round 10, with no code changes needed.
 
-**A note on `--max-rounds`:** the default (5) is enough for small scenarios (2-3 sellers), but with more participants — especially several using `"penetration"` — the negotiation may still be actively converging when the round limit cuts it off. At 15 sellers with 5 rounds, two aggressive sellers were still chasing each other's price down; raising `--max-rounds` to 30 showed they stabilize on their own around round 7 (a genuine price war settling, once neither can improve further) — the cutoff, not an unresolved conflict, was why it looked unfinished at the default.
+**A note on `--max-rounds`:** the default (5) is enough for small scenarios (2-3 sellers), but with more participants — especially several using `"penetration"` — the negotiation may still be actively converging when the round limit cuts it off. At 15 sellers with 5 rounds, two aggressive sellers were still chasing each other's price down; raising `--max-rounds` to 30 showed they stabilize on their own around round 7 (a genuine price war settling, once neither can improve further), the cutoff, not an unresolved conflict, was why it looked unfinished at the default.
 
 ## AI-assisted decisions (experimental)
 
 `core/ai_agent.py` (Gemini API) shows an alternative to the deterministic engine: a seller and a buyer that reason about the same kind of decision in natural language instead of computing expected value or comparing raw totals. `core/buyer.py` (`negotiate_and_choose()`) wires this into the main pipeline: it runs the deterministic negotiation across *all* sellers first (free, fast, scales to hundreds), then hands only the top N finalists to the AI for a final decision — instead of calling an LLM once per seller, which would be slow, costly, and unnecessary since the price-based part is already handled deterministically. Run `python examples/ai_demo.py` (requires `GEMINI_API_KEY`) for a standalone look at the seller/buyer reasoning, or use `paylab negotiate-and-choose` for the full pipeline.
 
-**Known limitation:** unlike the deterministic engine, this is not reproducible and not covered by tests. Calling the same scenario multiple times can yield different (though generally still valid) outcomes, and occasionally verbose or self-contradictory reasoning. `temperature=0.0` is set on all calls, which resolved most of this in testing (3/3 clean runs after tuning), plus a code-level fallback that guarantees a valid `chosen_merchant` is always returned even if the model fails to pick one — but full determinism isn't something an LLM call can guarantee the way the math-based engine can. Treat this module as a demo of where the project could go, not as something to depend on.
+**Known limitation:** unlike the deterministic engine, this is not reproducible and not covered by tests. Calling the same scenario multiple times can yield different (though generally still valid) outcomes, and occasionally verbose or self-contradictory reasoning. `temperature=0.0` is set on all calls, which resolved most of this in testing (3/3 clean runs after tuning), plus a code-level fallback that guarantees a valid `chosen_merchant` is always returned even if the model fails to pick one, but full determinism isn't something an LLM call can guarantee the way the math-based engine can. Treat this module as a demo of where the project could go, not as something to depend on.
 
 ## Buyer component
 
@@ -123,15 +123,15 @@ Grounded in real pricing theory (Blythe, *Fondamenti di Marketing*, 2013, ch. 7;
 | `payforcrawl` | Cloudflare Pay per Crawl — access to content/resources, not e-commerce | `zone` |
 | `ap2` | Authorization framework (mandate-based), not an execution rail | `mandate_id` |
 
-**Design note:** every mock captures only the core mechanic of the real protocol it represents, not the full specification. `x402`, `mpp`, `visatap`, `mastercardpay`, and `payforcrawl` are treated here as interchangeable execution rails for simplicity; in reality some of them (e.g. Visa card payments) are implemented as *methods within* MPP rather than fully separate protocols. `ap2` is currently exposed as a peer protocol in `simulate` for consistency, even though conceptually it authorizes a payment rather than executing one — it's excluded from `auto` and `compare` for that reason. A cleaner `paylab authorize` step is planned (see Roadmap).
+**Design note:** every mock captures only the core mechanic of the real protocol it represents, not the full specification. `x402`, `mpp`, `visatap`, `mastercardpay`, and `payforcrawl` are treated here as interchangeable execution rails for simplicity; in reality some of them (e.g. Visa card payments) are implemented as *methods within* MPP rather than fully separate protocols. `ap2` is currently exposed as a peer protocol in `simulate` for consistency, even though conceptually it authorizes a payment rather than executing one, it's excluded from `auto` and `compare` for that reason. A cleaner `paylab authorize` step is planned (see Roadmap).
 
 ## Receipts
 
-Every simulated payment — approved or rejected — produces a receipt signed with **Ed25519**:
+Every simulated payment, approved or rejected, produces a receipt signed with **Ed25519**:
 - `receipt/generator.py` — `create_receipt()` / `verify_receipt()`
 - `receipt/keys.py` — key generation and loading (auto-generated on first run; raises `IncompleteKeyPairError` if only one of the two key files is present, instead of silently regenerating and invalidating old receipts)
 
-The private key (`receipt/private_key.pem`) is generated locally on first use and never leaves your machine — it's excluded from version control via `.gitignore`. Only the public key is needed to verify a receipt.
+The private key (`receipt/private_key.pem`) is generated locally on first use and never leaves your machine, it's excluded from version control via `.gitignore`. Only the public key is needed to verify a receipt.
 
 ## Project structure
 
@@ -174,7 +174,7 @@ pytest tests/ -v
 13 tests covering receipt signing, the expected-value negotiation engine, parameter calibration, and protocol routing/error handling.
 ## Roadmap
 
-- Redefine `ap2` as a separate authorization step (`paylab authorize`) that produces a mandate, consumed by `auto`/`compare`/`negotiate` — instead of listing it as a peer execution protocol
+- Redefine `ap2` as a separate authorization step (`paylab authorize`) that produces a mandate, consumed by `auto`/`compare`/`negotiate`, instead of listing it as a peer execution protocol
 - Reflect MPP's real internal structure (Core / Intents / Methods / Extensions) more faithfully, or document the simplification more prominently
 - Win probability currently depends only on price gap; could be extended to a feature vector (reputation, delivery time, stock, history) without changing the core expected-value model
 - Risk preference: expected value currently assumes risk neutrality (`probability × margin`); a `probability^alpha × margin^beta` formulation would let sellers be modeled as risk-averse, aggressive, or market-share-driven
