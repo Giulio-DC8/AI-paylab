@@ -1,7 +1,6 @@
 # AI-paylab 
-# agent-paylab
 
-**A local sandbox for prototyping how AI agents pay.** Simulate, compare, and negotiate payments across multiple agentic payment protocols — no real accounts, no API keys, no network calls.
+**Agent-paylab is a local sandbox for prototyping how AI agents pay.** Simulate, compare, and negotiate payments across multiple agentic payment protocols — no real accounts, no API keys, no network calls.
 
 ## See it in action
 
