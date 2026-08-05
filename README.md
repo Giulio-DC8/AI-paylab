@@ -89,10 +89,10 @@ Every payment simulation produces a **receipt signed with Ed25519** (real public
 
 Sellers don't apply a fixed discount. At every round, each `Seller` evaluates a range of candidate prices (from its current price down to its own minimum) and picks the one that maximizes **expected value**: `probability_of_winning(price) × remaining_margin(price)`. Win probability is a logistic function of the price gap to the competitor.
 
-Each `strategy` (`skimming`, `standard`, `penetration`) has its own `price_elasticity_belief`, how much a seller believes discounting improves its odds. These aren't hand-picked: `core/calibration.py` derives them with `scipy.optimize`, targeting a specific win probability at a 5% price gap (skimming stays confident even when pricier; penetration assumes being pricier hurts a lot, so it chases the competitor). Change the targets in `calibrate_strategies()` and the values used by `negotiate()` update automatically — nothing to copy by hand.
+Each `strategy` (`skimming`, `standard`, `penetration`) has its own `price_elasticity_belief`, how much a seller believes discounting improves its odds. These aren't hand-picked: `core/calibration.py` derives them with `scipy.optimize`, targeting a specific win probability at a 5% price gap (skimming stays confident even when pricier; penetration assumes being pricier hurts a lot, so it chases the competitor). Change the targets in `calibrate_strategies()` and the values used by `negotiate()` update automatically, nothing to copy by hand.
 
 Under the hood: `estimate_win_probability(gap, sensitivity) = 1 / (1 + exp(sensitivity * gap))`
-— a logistic function, chosen because it naturally gives 0.5 at equal prices and approaches
+, a logistic function, chosen because it naturally gives 0.5 at equal prices and approaches
 0 or 1 smoothly as the gap grows. `calibrate_strategies()` inverts this: given a target win
 probability at a 5% gap (skimming=40%, standard=25%, penetration=10%), it uses
 `scipy.optimize.minimize_scalar` to find the `sensitivity` value that produces it, currently
@@ -102,13 +102,13 @@ Grounded in real pricing theory (Blythe, *Fondamenti di Marketing*, 2013, ch. 7;
 
 **Scale-tested:** negotiation was tested with 2, 15, and 350 sellers (`examples/generate_sellers.py` generates random seller pools with a fixed seed for reproducibility). It scales without performance issues, 350 sellers converge naturally around round 10, with no code changes needed.
 
-**A note on `--max-rounds`:** the default (5) is enough for small scenarios (2-3 sellers), but with more participants — especially several using `"penetration"` — the negotiation may still be actively converging when the round limit cuts it off. At 15 sellers with 5 rounds, two aggressive sellers were still chasing each other's price down; raising `--max-rounds` to 30 showed they stabilize on their own around round 7 (a genuine price war settling, once neither can improve further), the cutoff, not an unresolved conflict, was why it looked unfinished at the default.
+**A note on `--max-rounds`:** the default (5) is enough for small scenarios (2-3 sellers), but with more participants, especially several using `"penetration"`, the negotiation may still be actively converging when the round limit cuts it off. At 15 sellers with 5 rounds, two aggressive sellers were still chasing each other's price down; raising `--max-rounds` to 30 showed they stabilize on their own around round 7 (a genuine price war settling, once neither can improve further), the cutoff, not an unresolved conflict, was why it looked unfinished at the default.
 
 **Rate-based negotiation:** the engine is agnostic to what the price represents, the same `Seller`/`negotiate()` used for total prices (e.g. 900) works identically for per-request or per-second rates (e.g. 0.00012), since the math only cares about the relative price gap, not the absolute scale. This means `lightning_l402` and `web_monetization` sellers can negotiate against each other using the exact same `paylab negotiate --sellers rate_sellers.json` command, no new code required. One real bug surfaced when testing this at rate scale: `min_price` and candidate prices were rounded to 2 decimal places, which silently collapsed tiny rates (e.g. 0.00012) to zero, blocking any discount. Fixed by rounding to 8 decimals instead, no change for normal-scale prices. One-shot and rate-based sellers aren't mixed in the same negotiation (comparing a fixed total against a per-unit rate would require an assumed volume to convert one into the other), see Roadmap.
 
 ## AI-assisted decisions (experimental)
 
-`core/ai_agent.py` (Gemini API) shows an alternative to the deterministic engine: a seller and a buyer that reason about the same kind of decision in natural language instead of computing expected value or comparing raw totals. `core/buyer.py` (`negotiate_and_choose()`) wires this into the main pipeline: it runs the deterministic negotiation across *all* sellers first (free, fast, scales to hundreds), then hands only the top N finalists to the AI for a final decision — instead of calling an LLM once per seller, which would be slow, costly, and unnecessary since the price-based part is already handled deterministically. Run `python examples/ai_demo.py` (requires `GEMINI_API_KEY`) for a standalone look at the seller/buyer reasoning, or use `paylab negotiate-and-choose` for the full pipeline.
+`core/ai_agent.py` (Gemini API) shows an alternative to the deterministic engine: a seller and a buyer that reason about the same kind of decision in natural language instead of computing expected value or comparing raw totals. `core/buyer.py` (`negotiate_and_choose()`) wires this into the main pipeline: it runs the deterministic negotiation across *all* sellers first (free, fast, scales to hundreds), then hands only the top N finalists to the AI for a final decision, instead of calling an LLM once per seller, which would be slow, costly, and unnecessary since the price-based part is already handled deterministically. Run `python examples/ai_demo.py` (requires `GEMINI_API_KEY`) for a standalone look at the seller/buyer reasoning, or use `paylab negotiate-and-choose` for the full pipeline.
 
 **Known limitation:** unlike the deterministic engine, this is not reproducible and not covered by tests. Calling the same scenario multiple times can yield different (though generally still valid) outcomes, and occasionally verbose or self-contradictory reasoning. `temperature=0.0` is set on all calls, which resolved most of this in testing (3/3 clean runs after tuning), plus a code-level fallback that guarantees a valid `chosen_merchant` is always returned even if the model fails to pick one, but full determinism isn't something an LLM call can guarantee the way the math-based engine can. Treat this module as a demo of where the project could go, not as something to depend on.
 
@@ -126,29 +126,29 @@ Six single-transaction ("one-shot") protocols:
 | `mpp` | Card/fiat rail with pre-authorized sessions | `currency` |
 | `visatap` | Agent recognition inside the Visa card network | `agent_token` |
 | `mastercardpay` | Agent recognition inside the Mastercard network | `agent_credential` |
-| `payforcrawl` | Cloudflare Pay per Crawl — access to content/resources, not e-commerce | `zone` |
+| `payforcrawl` | Cloudflare Pay per Crawl, access to content/resources, not e-commerce | `zone` |
 | `ap2` | Authorization framework (mandate-based), not an execution rail | `mandate_id` |
 
-Plus two per-unit / continuous-streaming protocols, conceptually different from the six above (no single fixed amount — cost accumulates per request or per second):
+Plus two per-unit / continuous-streaming protocols, conceptually different from the six above (no single fixed amount, cost accumulates per request or per second):
 
 | Protocol | What it represents | Command |
 |---|---|---|
 | `lightning_l402` | Lightning Network L402: per-request micropayments bundling auth + payment via a macaroon token | `paylab stream --protocol lightning_l402 --cost-per-request 0.0001 --request-count 1000` |
 | `web_monetization` | W3C Web Monetization / Interledger Protocol: continuous background payment stream while a resource is consumed | `paylab stream --protocol web_monetization --rate-per-second 0.001 --duration-seconds 30` |
 
-Plus one traditional pre-paid access-control model, conceptually different from both categories above (payment already happened out-of-band — the request only checks validity/credit, it never negotiates or decides anything):
+Plus one traditional pre-paid access-control model, conceptually different from both categories above (payment already happened out-of-band, the request only checks validity/credit, it never negotiates or decides anything):
 
 | Protocol | What it represents | Command |
 |---|---|---|
 | `api_key_quota` | Traditional API Key / OAuth model: account and credit set up beforehand; each request just checks key validity, remaining credit, and rate limits (HTTP 200/401/403/429) | `paylab check-access --merchant WeatherAPI --credit-balance 10.0 --request-cost 0.01` |
 
-**Design note:** every mock captures only the core mechanic of the real protocol it represents, not the full specification. `x402`, `mpp`, `visatap`, `mastercardpay`, and `payforcrawl` are treated here as interchangeable execution rails for simplicity; in reality some of them (e.g. Visa card payments) are implemented as *methods within* MPP rather than fully separate protocols. `ap2` is currently exposed as a peer protocol in `simulate` for consistency, even though conceptually it authorizes a payment rather than executing one — it's excluded from `auto` and `compare` for that reason. `lightning_l402` and `web_monetization` are kept separate from `simulate`/`auto`/`compare`/`negotiate` on purpose: those commands assume a single fixed `amount`, while streaming protocols accumulate cost over requests or time — a genuinely different interface, not just another protocol name. A cleaner `paylab authorize` step for `ap2` is planned (see Roadmap).
+**Design note:** every mock captures only the core mechanic of the real protocol it represents, not the full specification. `x402`, `mpp`, `visatap`, `mastercardpay`, and `payforcrawl` are treated here as interchangeable execution rails for simplicity; in reality some of them (e.g. Visa card payments) are implemented as *methods within* MPP rather than fully separate protocols. `ap2` is currently exposed as a peer protocol in `simulate` for consistency, even though conceptually it authorizes a payment rather than executing one, it's excluded from `auto` and `compare` for that reason. `lightning_l402` and `web_monetization` are kept separate from `simulate`/`auto`/`compare`/`negotiate` on purpose: those commands assume a single fixed `amount`, while streaming protocols accumulate cost over requests or time, a genuinely different interface, not just another protocol name. A cleaner `paylab authorize` step for `ap2` is planned (see Roadmap).
 
 ## Receipts
 
 Every simulated payment, approved or rejected, produces a receipt signed with **Ed25519**:
-- `receipt/generator.py` — `create_receipt()` / `verify_receipt()`
-- `receipt/keys.py` — key generation and loading (auto-generated on first run; raises `IncompleteKeyPairError` if only one of the two key files is present, instead of silently regenerating and invalidating old receipts)
+- `receipt/generator.py`, `create_receipt()` / `verify_receipt()`
+- `receipt/keys.py`, key generation and loading (auto-generated on first run; raises `IncompleteKeyPairError` if only one of the two key files is present, instead of silently regenerating and invalidating old receipts)
 
 The private key (`receipt/private_key.pem`) is generated locally on first use and never leaves your machine, it's excluded from version control via `.gitignore`. Only the public key is needed to verify a receipt.
 
