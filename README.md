@@ -4,6 +4,51 @@
 
 ## See it in action
 
+# agent-paylab
+
+**How do you test an AI agent that needs to pay?**
+
+Today that usually means API keys, merchant accounts, wallets, and sandbox environments, often real money, just to prototype logic. `agent-paylab` lets you build and test that decision logic entirely offline: simulate payment protocols, compare offers, negotiate prices, and generate cryptographically signed receipts, without touching a real payment rail.
+
+```
+AI Agent
+   │
+   ▼
+Compare offers  ──────────────┐
+   │                          │
+   ▼                          ▼
+Negotiate               (or: check access /
+   │                      per-request billing)
+   ▼
+Choose protocol
+   │
+   ▼
+Mock payment
+   │
+   ▼
+Signed receipt (Ed25519)
+```
+
+## Why this project exists
+
+While exploring agentic commerce protocols (x402, AP2, MPP, and others), it became clear that everyone was building payment *rails*  , but almost nothing existed to prototype the *decision logic* of an agent locally: which seller to pick, how to negotiate, when a discount is actually worth it. `agent-paylab` was built to fill that gap.
+
+The protocols are the medium. **The real subject is decision intelligence for agentic commerce**  , how an agent picks a seller, negotiates, and proves what it decided, independent of which rail eventually moves the money.
+
+## agent-paylab vs. the real thing
+
+| | Real payment rails | agent-paylab |
+|---|---|---|
+| Needs accounts | ✅ | ❌ |
+| Needs API keys | ✅ | ❌ |
+| Spends real money | ✅ | ❌ |
+| Sandbox available | Sometimes | Always |
+| Cryptographic receipts | Varies | ✅ (Ed25519) |
+| Multi-protocol out of the box | ❌ | ✅ (9 protocols) |
+
+## See it in action
+
+```
 $ paylab negotiate --sellers sellers.json
 
 --- Negotiation history ---
@@ -12,14 +57,11 @@ Round 1: {'Lufthansa': 900, 'Emirates': 878.75}
 Round 2: {'Lufthansa': 900, 'Emirates': 878.75}
 
 --- Winner: Emirates at 878.75 ---
+```
 
-Two sellers, two independent pricing strategies, negotiating by weighing expected value, probability of winning × remaining margin, at every candidate price, instead of applying a fixed discount step. Tested up to 350 sellers negotiating at once (see below). This is the part most payment protocol demos don't show: not *how* an agent pays, but *how it decides who to pay*.
+Two sellers, two independent pricing strategies, negotiating by weighing expected value at every candidate price  , not a fixed discount step. This is the part most payment protocol demos don't show: not *how* an agent pays, but *how it decides who to pay*. Full math and calibration details: [`docs/negotiation.md`](docs/negotiation.md).
 
-`agent-paylab` doesn't compete with x402, AP2, MPP, or any other payment protocol. It's a development tool: a place to prototype the *logic* of an agent that pays, protocol selection, offer comparison, price negotiation, tamper-evident receipts, before wiring anything to a real rail.
-
-## Why
-
-Agentic payment protocols are still fragmented and evolving fast. Testing an agent's payment logic against real infrastructure means real accounts, real keys, and real (if small) money. `agent-paylab` removes that friction entirely, every protocol is mocked, every transaction is local, every receipt is cryptographically real.
+`agent-paylab` doesn't compete with x402, AP2, MPP, or any other payment protocol  , it's a development tool for the logic that decides *before* any of them get called.
 
 ## Install
 
@@ -83,7 +125,7 @@ Every payment simulation produces a **receipt signed with Ed25519** (real public
 | `paylab negotiate --sellers file.json [--max-rounds N]` | Run a multi-round negotiation between sellers, each maximizing expected value at every round (default: 5 rounds) |
 | `paylab negotiate-and-choose --sellers file.json --preferences "..." [--top-n N] [--max-rounds N]` | Negotiate across all sellers deterministically, then let an LLM choose among the top N finalists based on natural-language preferences |
 | `paylab stream --protocol X --merchant M ...` | Simulate a per-request (Lightning L402) or continuous-streaming (Web Monetization) micropayment |
-| `paylab check-access --merchant M ...` | Check API key/quota access (traditional pre-paid credential model — no real-time negotiation, only a validity/credit check) |
+| `paylab check-access --merchant M ...` | Check API key/quota access (traditional pre-paid credential model  , no real-time negotiation, only a validity/credit check) |
 
 ## Negotiation model
 
@@ -91,20 +133,9 @@ Sellers don't apply a fixed discount. At every round, each `Seller` evaluates a 
 
 Each `strategy` (`skimming`, `standard`, `penetration`) has its own `price_elasticity_belief`, how much a seller believes discounting improves its odds. These aren't hand-picked: `core/calibration.py` derives them with `scipy.optimize`, targeting a specific win probability at a 5% price gap (skimming stays confident even when pricier; penetration assumes being pricier hurts a lot, so it chases the competitor). Change the targets in `calibrate_strategies()` and the values used by `negotiate()` update automatically, nothing to copy by hand.
 
-Under the hood: `estimate_win_probability(gap, sensitivity) = 1 / (1 + exp(sensitivity * gap))`
-, a logistic function, chosen because it naturally gives 0.5 at equal prices and approaches
-0 or 1 smoothly as the gap grows. `calibrate_strategies()` inverts this: given a target win
-probability at a 5% gap (skimming=40%, standard=25%, penetration=10%), it uses
-`scipy.optimize.minimize_scalar` to find the `sensitivity` value that produces it, currently
-≈8.11 / 21.97 / 43.94 respectively.
+## Negotiation model
 
-Grounded in real pricing theory (Blythe, *Fondamenti di Marketing*, 2013, ch. 7; LIUC pricing strategy lecture notes) rather than arbitrary rules: `skimming` mirrors market-skimming (patient, protects margin), `penetration` mirrors penetration pricing (aggressive, chases market share, at the real-world risk of a price war if a competitor matches it).
-
-**Scale-tested:** negotiation was tested with 2, 15, and 350 sellers (`examples/generate_sellers.py` generates random seller pools with a fixed seed for reproducibility). It scales without performance issues, 350 sellers converge naturally around round 10, with no code changes needed.
-
-**A note on `--max-rounds`:** the default (5) is enough for small scenarios (2-3 sellers), but with more participants, especially several using `"penetration"`, the negotiation may still be actively converging when the round limit cuts it off. At 15 sellers with 5 rounds, two aggressive sellers were still chasing each other's price down; raising `--max-rounds` to 30 showed they stabilize on their own around round 7 (a genuine price war settling, once neither can improve further), the cutoff, not an unresolved conflict, was why it looked unfinished at the default.
-
-**Rate-based negotiation:** the engine is agnostic to what the price represents, the same `Seller`/`negotiate()` used for total prices (e.g. 900) works identically for per-request or per-second rates (e.g. 0.00012), since the math only cares about the relative price gap, not the absolute scale. This means `lightning_l402` and `web_monetization` sellers can negotiate against each other using the exact same `paylab negotiate --sellers rate_sellers.json` command, no new code required. One real bug surfaced when testing this at rate scale: `min_price` and candidate prices were rounded to 2 decimal places, which silently collapsed tiny rates (e.g. 0.00012) to zero, blocking any discount. Fixed by rounding to 8 decimals instead, no change for normal-scale prices. One-shot and rate-based sellers aren't mixed in the same negotiation (comparing a fixed total against a per-unit rate would require an assumed volume to convert one into the other), see Roadmap.
+See [`docs/negotiation.md`](docs/negotiation.md) for the full explanation: the expected-value formula, why it's a logistic function, how `core/calibration.py` derives the parameters with `scipy.optimize` instead of hand-picking them, and the numerical precision bug that surfaced when extending this to rate-based (per-request) negotiation.
 
 ## AI-assisted decisions (experimental)
 
@@ -122,7 +153,7 @@ Six single-transaction ("one-shot") protocols:
 
 | Protocol | What it represents | Notable field |
 |---|---|---|
-| `x402` | Direct payment rail over HTTP 402 (stablecoin-native) | — |
+| `x402` | Direct payment rail over HTTP 402 (stablecoin-native) |  , |
 | `mpp` | Card/fiat rail with pre-authorized sessions | `currency` |
 | `visatap` | Agent recognition inside the Visa card network | `agent_token` |
 | `mastercardpay` | Agent recognition inside the Mastercard network | `agent_credential` |
