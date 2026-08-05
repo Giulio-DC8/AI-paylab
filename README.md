@@ -13,7 +13,7 @@ Round 2: {'Lufthansa': 900, 'Emirates': 878.75}
 
 --- Winner: Emirates at 878.75 ---
 
-Two sellers, two independent pricing strategies, negotiating by weighing expected value — probability of winning × remaining margin — at every candidate price, instead of applying a fixed discount step. Tested up to 350 sellers negotiating at once (see below). This is the part most payment protocol demos don't show: not *how* an agent pays, but *how it decides who to pay*.
+Two sellers, two independent pricing strategies, negotiating by weighing expected value, probability of winning × remaining margin, at every candidate price, instead of applying a fixed discount step. Tested up to 350 sellers negotiating at once (see below). This is the part most payment protocol demos don't show: not *how* an agent pays, but *how it decides who to pay*.
 
 `agent-paylab` doesn't compete with x402, AP2, MPP, or any other payment protocol. It's a development tool: a place to prototype the *logic* of an agent that pays, protocol selection, offer comparison, price negotiation, tamper-evident receipts, before wiring anything to a real rail.
 
