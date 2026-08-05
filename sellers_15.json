@@ -1,0 +1,17 @@
+[
+  {"name": "Lufthansa", "starting_price": 950, "min_margin": 0.10, "strategy": "skimming"},
+  {"name": "Emirates", "starting_price": 900, "min_margin": 0.15, "strategy": "penetration"},
+  {"name": "Qatar Airways", "starting_price": 920, "min_margin": 0.12, "strategy": "standard"},
+  {"name": "Turkish Airlines", "starting_price": 880, "min_margin": 0.08, "strategy": "penetration"},
+  {"name": "Air France", "starting_price": 960, "min_margin": 0.11, "strategy": "skimming"},
+  {"name": "KLM", "starting_price": 940, "min_margin": 0.09, "strategy": "standard"},
+  {"name": "British Airways", "starting_price": 970, "min_margin": 0.13, "strategy": "skimming"},
+  {"name": "Etihad", "starting_price": 910, "min_margin": 0.14, "strategy": "penetration"},
+  {"name": "Singapore Airlines", "starting_price": 990, "min_margin": 0.10, "strategy": "skimming"},
+  {"name": "Cathay Pacific", "starting_price": 930, "min_margin": 0.11, "strategy": "standard"},
+  {"name": "ANA", "starting_price": 945, "min_margin": 0.09, "strategy": "standard"},
+  {"name": "Delta", "starting_price": 915, "min_margin": 0.10, "strategy": "penetration"},
+  {"name": "United", "starting_price": 925, "min_margin": 0.08, "strategy": "penetration"},
+  {"name": "Swiss", "starting_price": 955, "min_margin": 0.12, "strategy": "skimming"},
+  {"name": "Iberia", "starting_price": 905, "min_margin": 0.10, "strategy": "standard"}
+]

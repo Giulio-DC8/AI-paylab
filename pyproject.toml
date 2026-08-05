@@ -1,0 +1,19 @@
+[project]
+name = "agent-paylab"
+version = "0.1.0"
+description = "Sandbox open source per simulare pagamenti agentici multi-protocollo"
+requires-python = ">=3.11"
+dependencies = ["cryptography", "scipy"]
+
+[project.optional-dependencies]
+ai = ["google-genai"]
+
+[project.scripts]
+paylab = "core.cli:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["core", "protocols", "protocols.x402", "protocols.ap2", "protocols.mpp", "protocols.visatap", "protocols.mastercardpay", "protocols.payforcrawl", "receipt"]

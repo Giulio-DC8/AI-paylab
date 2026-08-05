@@ -1,0 +1,4 @@
+[
+  {"merchant": "Lufthansa", "amount": 950, "protocol": "visatap"},
+  {"merchant": "Emirates", "amount": 900, "protocol": "x402"}
+]

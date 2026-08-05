@@ -1,0 +1,2102 @@
+[
+  {
+    "name": "Seller_000",
+    "starting_price": 927.89,
+    "min_margin": 0.054,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_001",
+    "starting_price": 848.98,
+    "min_margin": 0.071,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_002",
+    "starting_price": 935.34,
+    "min_margin": 0.184,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_003",
+    "starting_price": 918.1,
+    "min_margin": 0.055,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_004",
+    "starting_price": 843.73,
+    "min_margin": 0.126,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_005",
+    "starting_price": 912.25,
+    "min_margin": 0.157,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_006",
+    "starting_price": 908.99,
+    "min_margin": 0.083,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_007",
+    "starting_price": 855.64,
+    "min_margin": 0.18,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_008",
+    "starting_price": 939.63,
+    "min_margin": 0.101,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_009",
+    "starting_price": 843.06,
+    "min_margin": 0.165,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_010",
+    "starting_price": 818.55,
+    "min_margin": 0.065,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_011",
+    "starting_price": 920.75,
+    "min_margin": 0.171,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_012",
+    "starting_price": 891.88,
+    "min_margin": 0.069,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_013",
+    "starting_price": 815.76,
+    "min_margin": 0.094,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_014",
+    "starting_price": 923.7,
+    "min_margin": 0.179,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_015",
+    "starting_price": 838.46,
+    "min_margin": 0.06,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_016",
+    "starting_price": 845.58,
+    "min_margin": 0.093,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_017",
+    "starting_price": 971.06,
+    "min_margin": 0.18,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_018",
+    "starting_price": 855.59,
+    "min_margin": 0.145,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_019",
+    "starting_price": 832.53,
+    "min_margin": 0.103,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_020",
+    "starting_price": 853.4,
+    "min_margin": 0.19,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_021",
+    "starting_price": 814.28,
+    "min_margin": 0.145,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_022",
+    "starting_price": 945.83,
+    "min_margin": 0.075,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_023",
+    "starting_price": 853.99,
+    "min_margin": 0.189,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_024",
+    "starting_price": 911.39,
+    "min_margin": 0.153,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_025",
+    "starting_price": 845.81,
+    "min_margin": 0.055,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_026",
+    "starting_price": 880.23,
+    "min_margin": 0.06,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_027",
+    "starting_price": 975.27,
+    "min_margin": 0.097,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_028",
+    "starting_price": 899.85,
+    "min_margin": 0.183,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_029",
+    "starting_price": 891.77,
+    "min_margin": 0.09,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_030",
+    "starting_price": 949.0,
+    "min_margin": 0.131,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_031",
+    "starting_price": 916.92,
+    "min_margin": 0.185,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_032",
+    "starting_price": 872.4,
+    "min_margin": 0.2,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_033",
+    "starting_price": 901.91,
+    "min_margin": 0.064,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_034",
+    "starting_price": 972.22,
+    "min_margin": 0.073,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_035",
+    "starting_price": 958.42,
+    "min_margin": 0.113,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_036",
+    "starting_price": 876.95,
+    "min_margin": 0.139,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_037",
+    "starting_price": 905.82,
+    "min_margin": 0.196,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_038",
+    "starting_price": 936.06,
+    "min_margin": 0.067,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_039",
+    "starting_price": 950.18,
+    "min_margin": 0.165,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_040",
+    "starting_price": 822.31,
+    "min_margin": 0.115,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_041",
+    "starting_price": 800.65,
+    "min_margin": 0.158,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_042",
+    "starting_price": 852.68,
+    "min_margin": 0.125,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_043",
+    "starting_price": 901.54,
+    "min_margin": 0.066,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_044",
+    "starting_price": 859.69,
+    "min_margin": 0.146,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_045",
+    "starting_price": 839.78,
+    "min_margin": 0.106,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_046",
+    "starting_price": 907.88,
+    "min_margin": 0.167,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_047",
+    "starting_price": 983.7,
+    "min_margin": 0.14,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_048",
+    "starting_price": 803.9,
+    "min_margin": 0.189,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_049",
+    "starting_price": 847.89,
+    "min_margin": 0.086,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_050",
+    "starting_price": 989.39,
+    "min_margin": 0.063,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_051",
+    "starting_price": 963.2,
+    "min_margin": 0.197,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_052",
+    "starting_price": 953.17,
+    "min_margin": 0.069,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_053",
+    "starting_price": 989.37,
+    "min_margin": 0.075,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_054",
+    "starting_price": 974.49,
+    "min_margin": 0.113,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_055",
+    "starting_price": 985.78,
+    "min_margin": 0.163,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_056",
+    "starting_price": 840.23,
+    "min_margin": 0.097,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_057",
+    "starting_price": 929.98,
+    "min_margin": 0.116,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_058",
+    "starting_price": 890.3,
+    "min_margin": 0.087,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_059",
+    "starting_price": 867.62,
+    "min_margin": 0.138,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_060",
+    "starting_price": 917.69,
+    "min_margin": 0.051,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_061",
+    "starting_price": 926.22,
+    "min_margin": 0.084,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_062",
+    "starting_price": 971.93,
+    "min_margin": 0.061,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_063",
+    "starting_price": 855.7,
+    "min_margin": 0.123,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_064",
+    "starting_price": 826.46,
+    "min_margin": 0.19,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_065",
+    "starting_price": 915.24,
+    "min_margin": 0.086,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_066",
+    "starting_price": 961.5,
+    "min_margin": 0.079,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_067",
+    "starting_price": 931.8,
+    "min_margin": 0.103,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_068",
+    "starting_price": 893.4,
+    "min_margin": 0.159,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_069",
+    "starting_price": 930.69,
+    "min_margin": 0.147,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_070",
+    "starting_price": 880.52,
+    "min_margin": 0.101,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_071",
+    "starting_price": 849.73,
+    "min_margin": 0.079,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_072",
+    "starting_price": 828.04,
+    "min_margin": 0.078,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_073",
+    "starting_price": 849.96,
+    "min_margin": 0.188,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_074",
+    "starting_price": 961.6,
+    "min_margin": 0.178,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_075",
+    "starting_price": 810.12,
+    "min_margin": 0.2,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_076",
+    "starting_price": 993.8,
+    "min_margin": 0.189,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_077",
+    "starting_price": 833.26,
+    "min_margin": 0.123,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_078",
+    "starting_price": 972.93,
+    "min_margin": 0.185,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_079",
+    "starting_price": 875.79,
+    "min_margin": 0.198,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_080",
+    "starting_price": 985.3,
+    "min_margin": 0.168,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_081",
+    "starting_price": 884.6,
+    "min_margin": 0.194,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_082",
+    "starting_price": 932.37,
+    "min_margin": 0.123,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_083",
+    "starting_price": 859.34,
+    "min_margin": 0.195,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_084",
+    "starting_price": 947.15,
+    "min_margin": 0.059,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_085",
+    "starting_price": 811.43,
+    "min_margin": 0.138,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_086",
+    "starting_price": 983.88,
+    "min_margin": 0.13,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_087",
+    "starting_price": 992.16,
+    "min_margin": 0.062,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_088",
+    "starting_price": 813.7,
+    "min_margin": 0.06,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_089",
+    "starting_price": 880.76,
+    "min_margin": 0.191,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_090",
+    "starting_price": 849.24,
+    "min_margin": 0.139,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_091",
+    "starting_price": 816.4,
+    "min_margin": 0.149,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_092",
+    "starting_price": 904.56,
+    "min_margin": 0.19,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_093",
+    "starting_price": 933.95,
+    "min_margin": 0.097,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_094",
+    "starting_price": 879.16,
+    "min_margin": 0.151,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_095",
+    "starting_price": 891.44,
+    "min_margin": 0.189,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_096",
+    "starting_price": 801.86,
+    "min_margin": 0.143,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_097",
+    "starting_price": 999.22,
+    "min_margin": 0.061,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_098",
+    "starting_price": 901.18,
+    "min_margin": 0.07,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_099",
+    "starting_price": 976.17,
+    "min_margin": 0.182,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_100",
+    "starting_price": 857.0,
+    "min_margin": 0.116,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_101",
+    "starting_price": 940.71,
+    "min_margin": 0.142,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_102",
+    "starting_price": 905.79,
+    "min_margin": 0.15,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_103",
+    "starting_price": 859.88,
+    "min_margin": 0.15,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_104",
+    "starting_price": 852.89,
+    "min_margin": 0.183,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_105",
+    "starting_price": 910.64,
+    "min_margin": 0.091,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_106",
+    "starting_price": 842.13,
+    "min_margin": 0.101,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_107",
+    "starting_price": 926.85,
+    "min_margin": 0.09,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_108",
+    "starting_price": 850.22,
+    "min_margin": 0.186,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_109",
+    "starting_price": 818.46,
+    "min_margin": 0.114,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_110",
+    "starting_price": 808.82,
+    "min_margin": 0.1,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_111",
+    "starting_price": 927.42,
+    "min_margin": 0.089,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_112",
+    "starting_price": 888.37,
+    "min_margin": 0.156,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_113",
+    "starting_price": 801.93,
+    "min_margin": 0.061,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_114",
+    "starting_price": 980.79,
+    "min_margin": 0.132,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_115",
+    "starting_price": 916.5,
+    "min_margin": 0.072,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_116",
+    "starting_price": 808.37,
+    "min_margin": 0.105,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_117",
+    "starting_price": 979.78,
+    "min_margin": 0.082,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_118",
+    "starting_price": 933.39,
+    "min_margin": 0.103,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_119",
+    "starting_price": 976.83,
+    "min_margin": 0.111,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_120",
+    "starting_price": 949.9,
+    "min_margin": 0.189,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_121",
+    "starting_price": 972.92,
+    "min_margin": 0.196,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_122",
+    "starting_price": 976.28,
+    "min_margin": 0.054,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_123",
+    "starting_price": 984.9,
+    "min_margin": 0.167,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_124",
+    "starting_price": 960.45,
+    "min_margin": 0.18,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_125",
+    "starting_price": 853.36,
+    "min_margin": 0.168,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_126",
+    "starting_price": 876.51,
+    "min_margin": 0.056,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_127",
+    "starting_price": 844.49,
+    "min_margin": 0.172,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_128",
+    "starting_price": 869.93,
+    "min_margin": 0.173,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_129",
+    "starting_price": 844.58,
+    "min_margin": 0.149,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_130",
+    "starting_price": 865.65,
+    "min_margin": 0.18,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_131",
+    "starting_price": 870.23,
+    "min_margin": 0.126,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_132",
+    "starting_price": 996.23,
+    "min_margin": 0.13,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_133",
+    "starting_price": 823.07,
+    "min_margin": 0.196,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_134",
+    "starting_price": 916.12,
+    "min_margin": 0.198,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_135",
+    "starting_price": 821.68,
+    "min_margin": 0.115,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_136",
+    "starting_price": 957.29,
+    "min_margin": 0.115,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_137",
+    "starting_price": 823.13,
+    "min_margin": 0.185,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_138",
+    "starting_price": 850.94,
+    "min_margin": 0.156,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_139",
+    "starting_price": 903.98,
+    "min_margin": 0.171,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_140",
+    "starting_price": 943.89,
+    "min_margin": 0.161,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_141",
+    "starting_price": 839.41,
+    "min_margin": 0.115,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_142",
+    "starting_price": 984.15,
+    "min_margin": 0.143,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_143",
+    "starting_price": 969.6,
+    "min_margin": 0.158,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_144",
+    "starting_price": 901.42,
+    "min_margin": 0.15,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_145",
+    "starting_price": 880.48,
+    "min_margin": 0.094,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_146",
+    "starting_price": 838.37,
+    "min_margin": 0.15,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_147",
+    "starting_price": 935.46,
+    "min_margin": 0.185,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_148",
+    "starting_price": 913.82,
+    "min_margin": 0.111,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_149",
+    "starting_price": 860.77,
+    "min_margin": 0.082,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_150",
+    "starting_price": 921.33,
+    "min_margin": 0.098,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_151",
+    "starting_price": 888.43,
+    "min_margin": 0.082,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_152",
+    "starting_price": 958.75,
+    "min_margin": 0.194,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_153",
+    "starting_price": 833.94,
+    "min_margin": 0.063,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_154",
+    "starting_price": 932.77,
+    "min_margin": 0.143,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_155",
+    "starting_price": 963.68,
+    "min_margin": 0.163,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_156",
+    "starting_price": 862.08,
+    "min_margin": 0.171,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_157",
+    "starting_price": 804.89,
+    "min_margin": 0.087,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_158",
+    "starting_price": 922.25,
+    "min_margin": 0.165,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_159",
+    "starting_price": 882.89,
+    "min_margin": 0.144,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_160",
+    "starting_price": 943.67,
+    "min_margin": 0.108,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_161",
+    "starting_price": 848.8,
+    "min_margin": 0.148,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_162",
+    "starting_price": 978.53,
+    "min_margin": 0.179,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_163",
+    "starting_price": 955.68,
+    "min_margin": 0.083,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_164",
+    "starting_price": 903.59,
+    "min_margin": 0.058,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_165",
+    "starting_price": 983.49,
+    "min_margin": 0.068,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_166",
+    "starting_price": 960.28,
+    "min_margin": 0.15,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_167",
+    "starting_price": 919.09,
+    "min_margin": 0.193,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_168",
+    "starting_price": 922.53,
+    "min_margin": 0.158,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_169",
+    "starting_price": 885.35,
+    "min_margin": 0.186,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_170",
+    "starting_price": 979.44,
+    "min_margin": 0.162,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_171",
+    "starting_price": 890.01,
+    "min_margin": 0.163,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_172",
+    "starting_price": 855.46,
+    "min_margin": 0.167,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_173",
+    "starting_price": 925.35,
+    "min_margin": 0.091,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_174",
+    "starting_price": 942.71,
+    "min_margin": 0.085,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_175",
+    "starting_price": 863.94,
+    "min_margin": 0.131,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_176",
+    "starting_price": 830.17,
+    "min_margin": 0.107,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_177",
+    "starting_price": 941.28,
+    "min_margin": 0.06,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_178",
+    "starting_price": 866.18,
+    "min_margin": 0.12,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_179",
+    "starting_price": 841.37,
+    "min_margin": 0.113,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_180",
+    "starting_price": 989.21,
+    "min_margin": 0.053,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_181",
+    "starting_price": 876.08,
+    "min_margin": 0.051,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_182",
+    "starting_price": 859.72,
+    "min_margin": 0.108,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_183",
+    "starting_price": 907.64,
+    "min_margin": 0.16,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_184",
+    "starting_price": 979.56,
+    "min_margin": 0.123,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_185",
+    "starting_price": 887.17,
+    "min_margin": 0.054,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_186",
+    "starting_price": 933.77,
+    "min_margin": 0.17,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_187",
+    "starting_price": 833.01,
+    "min_margin": 0.12,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_188",
+    "starting_price": 996.14,
+    "min_margin": 0.13,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_189",
+    "starting_price": 918.38,
+    "min_margin": 0.149,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_190",
+    "starting_price": 928.55,
+    "min_margin": 0.07,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_191",
+    "starting_price": 836.35,
+    "min_margin": 0.089,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_192",
+    "starting_price": 842.33,
+    "min_margin": 0.099,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_193",
+    "starting_price": 855.65,
+    "min_margin": 0.193,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_194",
+    "starting_price": 850.45,
+    "min_margin": 0.062,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_195",
+    "starting_price": 949.8,
+    "min_margin": 0.058,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_196",
+    "starting_price": 844.84,
+    "min_margin": 0.06,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_197",
+    "starting_price": 808.05,
+    "min_margin": 0.055,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_198",
+    "starting_price": 839.87,
+    "min_margin": 0.053,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_199",
+    "starting_price": 847.71,
+    "min_margin": 0.121,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_200",
+    "starting_price": 912.79,
+    "min_margin": 0.083,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_201",
+    "starting_price": 851.25,
+    "min_margin": 0.105,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_202",
+    "starting_price": 921.45,
+    "min_margin": 0.162,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_203",
+    "starting_price": 955.56,
+    "min_margin": 0.075,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_204",
+    "starting_price": 821.62,
+    "min_margin": 0.054,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_205",
+    "starting_price": 915.16,
+    "min_margin": 0.186,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_206",
+    "starting_price": 879.33,
+    "min_margin": 0.157,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_207",
+    "starting_price": 918.42,
+    "min_margin": 0.175,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_208",
+    "starting_price": 820.38,
+    "min_margin": 0.166,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_209",
+    "starting_price": 920.08,
+    "min_margin": 0.068,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_210",
+    "starting_price": 956.53,
+    "min_margin": 0.102,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_211",
+    "starting_price": 932.3,
+    "min_margin": 0.06,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_212",
+    "starting_price": 868.25,
+    "min_margin": 0.177,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_213",
+    "starting_price": 821.11,
+    "min_margin": 0.194,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_214",
+    "starting_price": 978.32,
+    "min_margin": 0.119,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_215",
+    "starting_price": 887.1,
+    "min_margin": 0.16,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_216",
+    "starting_price": 854.02,
+    "min_margin": 0.171,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_217",
+    "starting_price": 954.93,
+    "min_margin": 0.12,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_218",
+    "starting_price": 918.49,
+    "min_margin": 0.098,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_219",
+    "starting_price": 966.15,
+    "min_margin": 0.063,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_220",
+    "starting_price": 848.77,
+    "min_margin": 0.12,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_221",
+    "starting_price": 933.64,
+    "min_margin": 0.1,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_222",
+    "starting_price": 970.19,
+    "min_margin": 0.077,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_223",
+    "starting_price": 870.96,
+    "min_margin": 0.089,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_224",
+    "starting_price": 976.06,
+    "min_margin": 0.155,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_225",
+    "starting_price": 911.16,
+    "min_margin": 0.127,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_226",
+    "starting_price": 817.12,
+    "min_margin": 0.158,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_227",
+    "starting_price": 911.04,
+    "min_margin": 0.086,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_228",
+    "starting_price": 929.18,
+    "min_margin": 0.124,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_229",
+    "starting_price": 818.61,
+    "min_margin": 0.083,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_230",
+    "starting_price": 848.66,
+    "min_margin": 0.15,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_231",
+    "starting_price": 894.65,
+    "min_margin": 0.13,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_232",
+    "starting_price": 999.33,
+    "min_margin": 0.133,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_233",
+    "starting_price": 940.57,
+    "min_margin": 0.091,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_234",
+    "starting_price": 846.11,
+    "min_margin": 0.158,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_235",
+    "starting_price": 823.91,
+    "min_margin": 0.13,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_236",
+    "starting_price": 837.03,
+    "min_margin": 0.082,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_237",
+    "starting_price": 855.3,
+    "min_margin": 0.138,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_238",
+    "starting_price": 919.36,
+    "min_margin": 0.197,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_239",
+    "starting_price": 859.25,
+    "min_margin": 0.104,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_240",
+    "starting_price": 802.83,
+    "min_margin": 0.13,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_241",
+    "starting_price": 809.1,
+    "min_margin": 0.058,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_242",
+    "starting_price": 939.48,
+    "min_margin": 0.069,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_243",
+    "starting_price": 820.52,
+    "min_margin": 0.052,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_244",
+    "starting_price": 893.88,
+    "min_margin": 0.116,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_245",
+    "starting_price": 993.1,
+    "min_margin": 0.088,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_246",
+    "starting_price": 822.82,
+    "min_margin": 0.06,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_247",
+    "starting_price": 814.82,
+    "min_margin": 0.144,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_248",
+    "starting_price": 830.35,
+    "min_margin": 0.172,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_249",
+    "starting_price": 817.04,
+    "min_margin": 0.087,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_250",
+    "starting_price": 952.89,
+    "min_margin": 0.141,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_251",
+    "starting_price": 845.14,
+    "min_margin": 0.128,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_252",
+    "starting_price": 981.7,
+    "min_margin": 0.095,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_253",
+    "starting_price": 998.01,
+    "min_margin": 0.096,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_254",
+    "starting_price": 812.05,
+    "min_margin": 0.194,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_255",
+    "starting_price": 989.52,
+    "min_margin": 0.081,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_256",
+    "starting_price": 852.93,
+    "min_margin": 0.062,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_257",
+    "starting_price": 834.76,
+    "min_margin": 0.061,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_258",
+    "starting_price": 881.7,
+    "min_margin": 0.153,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_259",
+    "starting_price": 858.25,
+    "min_margin": 0.085,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_260",
+    "starting_price": 856.54,
+    "min_margin": 0.179,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_261",
+    "starting_price": 937.48,
+    "min_margin": 0.189,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_262",
+    "starting_price": 917.96,
+    "min_margin": 0.171,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_263",
+    "starting_price": 885.03,
+    "min_margin": 0.132,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_264",
+    "starting_price": 829.8,
+    "min_margin": 0.09,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_265",
+    "starting_price": 814.28,
+    "min_margin": 0.075,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_266",
+    "starting_price": 919.01,
+    "min_margin": 0.174,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_267",
+    "starting_price": 887.83,
+    "min_margin": 0.12,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_268",
+    "starting_price": 939.95,
+    "min_margin": 0.191,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_269",
+    "starting_price": 908.0,
+    "min_margin": 0.116,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_270",
+    "starting_price": 807.97,
+    "min_margin": 0.115,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_271",
+    "starting_price": 920.74,
+    "min_margin": 0.054,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_272",
+    "starting_price": 992.38,
+    "min_margin": 0.175,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_273",
+    "starting_price": 917.42,
+    "min_margin": 0.053,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_274",
+    "starting_price": 964.28,
+    "min_margin": 0.136,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_275",
+    "starting_price": 894.1,
+    "min_margin": 0.148,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_276",
+    "starting_price": 836.3,
+    "min_margin": 0.138,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_277",
+    "starting_price": 962.85,
+    "min_margin": 0.195,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_278",
+    "starting_price": 869.59,
+    "min_margin": 0.1,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_279",
+    "starting_price": 820.92,
+    "min_margin": 0.074,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_280",
+    "starting_price": 938.73,
+    "min_margin": 0.093,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_281",
+    "starting_price": 962.71,
+    "min_margin": 0.133,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_282",
+    "starting_price": 817.61,
+    "min_margin": 0.088,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_283",
+    "starting_price": 994.04,
+    "min_margin": 0.111,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_284",
+    "starting_price": 964.99,
+    "min_margin": 0.05,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_285",
+    "starting_price": 892.4,
+    "min_margin": 0.058,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_286",
+    "starting_price": 872.36,
+    "min_margin": 0.163,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_287",
+    "starting_price": 888.41,
+    "min_margin": 0.058,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_288",
+    "starting_price": 909.84,
+    "min_margin": 0.189,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_289",
+    "starting_price": 976.17,
+    "min_margin": 0.123,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_290",
+    "starting_price": 994.63,
+    "min_margin": 0.141,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_291",
+    "starting_price": 941.96,
+    "min_margin": 0.097,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_292",
+    "starting_price": 910.45,
+    "min_margin": 0.064,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_293",
+    "starting_price": 892.29,
+    "min_margin": 0.068,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_294",
+    "starting_price": 899.68,
+    "min_margin": 0.157,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_295",
+    "starting_price": 941.08,
+    "min_margin": 0.112,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_296",
+    "starting_price": 996.05,
+    "min_margin": 0.087,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_297",
+    "starting_price": 828.93,
+    "min_margin": 0.079,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_298",
+    "starting_price": 901.65,
+    "min_margin": 0.182,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_299",
+    "starting_price": 855.25,
+    "min_margin": 0.169,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_300",
+    "starting_price": 867.98,
+    "min_margin": 0.168,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_301",
+    "starting_price": 964.11,
+    "min_margin": 0.092,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_302",
+    "starting_price": 967.5,
+    "min_margin": 0.137,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_303",
+    "starting_price": 897.93,
+    "min_margin": 0.072,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_304",
+    "starting_price": 896.87,
+    "min_margin": 0.1,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_305",
+    "starting_price": 875.44,
+    "min_margin": 0.19,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_306",
+    "starting_price": 996.15,
+    "min_margin": 0.086,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_307",
+    "starting_price": 846.71,
+    "min_margin": 0.166,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_308",
+    "starting_price": 863.64,
+    "min_margin": 0.121,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_309",
+    "starting_price": 877.22,
+    "min_margin": 0.15,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_310",
+    "starting_price": 996.16,
+    "min_margin": 0.124,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_311",
+    "starting_price": 825.25,
+    "min_margin": 0.195,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_312",
+    "starting_price": 973.94,
+    "min_margin": 0.181,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_313",
+    "starting_price": 819.94,
+    "min_margin": 0.187,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_314",
+    "starting_price": 944.49,
+    "min_margin": 0.111,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_315",
+    "starting_price": 993.99,
+    "min_margin": 0.061,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_316",
+    "starting_price": 867.71,
+    "min_margin": 0.154,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_317",
+    "starting_price": 816.06,
+    "min_margin": 0.099,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_318",
+    "starting_price": 971.87,
+    "min_margin": 0.107,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_319",
+    "starting_price": 925.36,
+    "min_margin": 0.183,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_320",
+    "starting_price": 974.48,
+    "min_margin": 0.055,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_321",
+    "starting_price": 846.95,
+    "min_margin": 0.153,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_322",
+    "starting_price": 999.49,
+    "min_margin": 0.162,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_323",
+    "starting_price": 995.67,
+    "min_margin": 0.164,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_324",
+    "starting_price": 974.52,
+    "min_margin": 0.117,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_325",
+    "starting_price": 859.89,
+    "min_margin": 0.054,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_326",
+    "starting_price": 959.23,
+    "min_margin": 0.094,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_327",
+    "starting_price": 886.14,
+    "min_margin": 0.087,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_328",
+    "starting_price": 913.19,
+    "min_margin": 0.169,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_329",
+    "starting_price": 835.01,
+    "min_margin": 0.141,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_330",
+    "starting_price": 923.94,
+    "min_margin": 0.086,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_331",
+    "starting_price": 828.62,
+    "min_margin": 0.119,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_332",
+    "starting_price": 891.91,
+    "min_margin": 0.15,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_333",
+    "starting_price": 980.24,
+    "min_margin": 0.152,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_334",
+    "starting_price": 814.77,
+    "min_margin": 0.192,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_335",
+    "starting_price": 859.83,
+    "min_margin": 0.194,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_336",
+    "starting_price": 850.02,
+    "min_margin": 0.177,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_337",
+    "starting_price": 999.87,
+    "min_margin": 0.178,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_338",
+    "starting_price": 847.44,
+    "min_margin": 0.136,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_339",
+    "starting_price": 859.17,
+    "min_margin": 0.155,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_340",
+    "starting_price": 995.59,
+    "min_margin": 0.149,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_341",
+    "starting_price": 801.62,
+    "min_margin": 0.18,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_342",
+    "starting_price": 994.72,
+    "min_margin": 0.187,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_343",
+    "starting_price": 899.35,
+    "min_margin": 0.186,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_344",
+    "starting_price": 955.15,
+    "min_margin": 0.085,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_345",
+    "starting_price": 843.8,
+    "min_margin": 0.079,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_346",
+    "starting_price": 935.55,
+    "min_margin": 0.158,
+    "strategy": "penetration"
+  },
+  {
+    "name": "Seller_347",
+    "starting_price": 936.17,
+    "min_margin": 0.071,
+    "strategy": "skimming"
+  },
+  {
+    "name": "Seller_348",
+    "starting_price": 980.68,
+    "min_margin": 0.147,
+    "strategy": "standard"
+  },
+  {
+    "name": "Seller_349",
+    "starting_price": 957.72,
+    "min_margin": 0.055,
+    "strategy": "standard"
+  }
+]

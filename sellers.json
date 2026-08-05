@@ -1,0 +1,4 @@
+[
+  {"name": "Lufthansa", "starting_price": 900, "min_margin": 0.1, "strategy": "skimming"},
+  {"name": "Emirates", "starting_price": 950, "min_margin": 0.15, "strategy": "penetration"}
+]

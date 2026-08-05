@@ -1,0 +1,22 @@
+# Cryptographic keys - NEVER publish
+receipt/private_key.pem
+receipt/public_key.pem
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environments
+.venv/
+env/
+
+# Build/packaging files
+*.egg-info/
+build/
+dist/
+
+# Test
+.pytest_cache/
+
+# System files
+.DS_Store
