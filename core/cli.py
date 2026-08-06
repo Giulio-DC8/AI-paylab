@@ -5,8 +5,14 @@ from protocols.web_monetization.mock import pay_stream
 from protocols.api_key_quota.mock import check_access
 from receipt.generator import create_receipt
 from core.router import choose_and_pay, choose_best_offer, simulate as run_simulate
-from core.negotiation import Seller, negotiate
 from core.buyer import negotiate_and_choose
+from core.negotiation import Seller, negotiate
+
+LAMBDA_TIME_PROFILES = {
+    "patient": 0.0,
+    "moderate": 0.1,
+    "urgent": 0.5,
+}
 
 
 def print_result(result):
@@ -71,7 +77,8 @@ def main():
     negotiate_parser = subparsers.add_parser("negotiate", help="Have multiple sellers negotiate against each other, pick the final lowest price")
     negotiate_parser.add_argument("--sellers", required=True, help="Path to a JSON file with the list of sellers")
     negotiate_parser.add_argument("--max-rounds", type=int, default=5, help="Maximum number of negotiation rounds (default: 5)")
-    negotiate_parser.add_argument("--lambda-time", type=float, default=0.0, help="Cost of waiting per round, proportional to how uncompetitive the price is (default: 0.0 = no time cost)")
+    negotiate_parser.add_argument("--lambda-time", type=float, default=0.0, help="Default time-cost factor for sellers that don't specify their own (default: 0.0 = no time cost). NOTE: higher isn't always better for the buyer -- see docs/negotiation.md")
+    negotiate_parser.add_argument("--urgency", choices=["patient", "moderate", "urgent"], default=None, help="Convenience shortcut for --lambda-time (patient=0.0, moderate=0.1, urgent=0.5); overridden by a seller's own lambda_time/urgency field in the JSON")
 
     buy_parser = subparsers.add_parser("negotiate-and-choose", help="Negotiate across many sellers, then let the AI choose among the finalists")
     buy_parser.add_argument("--sellers", required=True, help="Path to a JSON file with the list of sellers")
@@ -136,8 +143,20 @@ def main():
         with open(args.sellers, "r") as f:
             sellers_data = json.load(f)
 
-        sellers = [Seller(lambda_time=args.lambda_time, **s) for s in sellers_data]
+        cli_lambda_time = args.lambda_time
+        if args.urgency is not None:
+            cli_lambda_time = LAMBDA_TIME_PROFILES[args.urgency]
+
+        sellers = []
+        for s in sellers_data:
+            s = dict(s)
+            if "urgency" in s:
+                s["lambda_time"] = LAMBDA_TIME_PROFILES[s.pop("urgency")]
+            s.setdefault("lambda_time", cli_lambda_time)
+            sellers.append(Seller(**s))
+
         outcome = negotiate(sellers, max_rounds=args.max_rounds)
+
 
         print("--- Negotiation history ---")
         for round_info in outcome["history"]:
