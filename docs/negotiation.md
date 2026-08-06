@@ -53,7 +53,7 @@ using `scipy.optimize.minimize_scalar`, with design targets at a 5% price gap:
 
 # Where $p_{\min}$ comes from
 
-$$p_{\min} = p_{\text{starting}} \times (1 - \text{min\_margin})$$
+$$p_{\text{min}} = p_{\text{starting}} \dot (1 - \text{min\_margin})$$
 
 min_price = starting_price * (1 - min_margin)
 
