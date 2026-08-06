@@ -73,10 +73,10 @@ At every round, the seller generates 20 candidate prices between its current pri
 
 By default there's no cost to continuing to negotiate. With `lambda_time` ($\lambda$) set above 0:
 
-$$\underbrace{\text{V}(p, t)}_{\text{expected value}} = \underbrace{P_{\text{win}}(p) \cdot \text{Margin}(p)}_{\text{utile atteso}} \;-\; \underbrace{\lambda \cdot t \cdot \big(1 - P_{\text{win}}(p)\big) \cdot \text{Margin}(p)}_{\text{costo di rimanere fuori mercato al round } t}$$
+$$\underbrace{\text{EV}(p, t)}_{\text{expected value}} = \underbrace{P_{\text{win}}(p) \cdot \text{Margin}(p)}_{\text{utile atteso}} \;-\; \underbrace{\lambda \cdot t \cdot \big(1 - P_{\text{win}}(p)\big) \cdot \text{Margin}(p)}_{\text{costo di rimanere fuori mercato al round } t}$$
 
 ```
-V(price, round) = [P_win * margin]              <- utile atteso
+EV(price, round) = [P_win * margin]              <- utile atteso
                  - [lambda_time * round * (1 - P_win) * margin]   <- costo di rimanere fuori mercato al round t
 ```
 
