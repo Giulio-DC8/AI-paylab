@@ -50,7 +50,7 @@ using `scipy.optimize.minimize_scalar`, with design targets at a 5% price gap:
 | `standard` | 0.25 | ≈21.97 |
 | `penetration` | 0.10 | ≈43.94 |
 
-`skimming` stays confident even when pricier (flatter curve); `penetration` assumes being pricier hurts a lot, so it chases the competitor (steeper curve). Change the targets in `calibrate_strategies()` and these values update automatically — nothing to copy by hand.
+`skimming` stays confident even when pricier (flatter curve); `penetration` assumes being pricier hurts a lot, so it chases the competitor (steeper curve). Change the targets in `calibrate_strategies()` and these values update automatically,nothing to copy by hand.
 
 ## 4. Margin
 
@@ -156,7 +156,7 @@ Four sellers, `lambda_time=0` (no time cost, for simplicity):
 
 **Round 0:** starting prices, no discounting yet.
 
-**Round 1, step 1 — the buyer computes $p_c$:**
+**Round 1, step 1,the buyer computes $p_c$:**
 
 $$p_c^{(1)} = \min(1000, 900, 850, 950) = 850 \quad (\text{C's price})$$
 
@@ -186,7 +186,7 @@ $$V(900,\,1) \approx 0.216\times90 \approx 19.44$$
 
 | Seller | Price after round 1 |
 |---|---|
-| A | 1000 → 960 (far from the market, skimming — discounts cautiously) |
+| A | 1000 → 960 (far from the market, skimming,discounts cautiously) |
 | B | 900 → 856 |
 | C | 850 (didn't need to react) |
 | D | 950 → 870 |
@@ -201,7 +201,7 @@ C remains the target; A, B, D repeat the whole procedure from their new prices, 
 
 $$\text{winner} = \arg\min\big(p_A^{(T)},\, p_B^{(T)},\, p_C^{(T)},\, p_D^{(T)}\big)$$
 
-In this scenario, C — which started cheapest and never needed to discount, is very likely to win at 850, unless another seller manages to undercut it.
+In this scenario, C,which started cheapest and never needed to discount, is very likely to win at 850, unless another seller manages to undercut it.
 
 **The key thing to notice:** every seller runs the *exact same* calculation (steps 2–9), using only its *own* numbers ($p_{\text{current}}$, $p_{\min}$, $s$), nobody ever computes anything "against" a specific named competitor. Everyone computes only against the single number $p_c$ the buyer communicates that round.
 
@@ -210,7 +210,7 @@ In this scenario, C — which started cheapest and never needed to discount, is 
 
 Short answer: no. A seller's low $p_{\min}$ only translates into a win if its `strategy` (sensitivity $s$) is steep enough to actually chase the gap down. Two experiments, same question, different outcomes.
 
-### Experiment 1 — extreme margin advantage: X wins
+### Experiment 1,extreme margin advantage: X wins
 
 | Seller | starting_price | min_margin | $p_{\min}$ | strategy |
 |---|---|---|---|---|
@@ -227,9 +227,9 @@ Round 3: X=595.0, Y=701.25, Z=707.36, W=714.87
 Winner: X at 595.0
 ```
 
-X's $p_{\min}$ (100) is so far below everyone else's that even skimming's flat probability curve finds it worthwhile to jump straight to 595 in round 1 — the margin available is large enough that a small probability gain still produces a higher $V$ than any cautious alternative. Once at 595, nobody else can get close, so X stops discounting (already near-certain to win) while Y, Z, W settle among themselves.
+X's $p_{\min}$ (100) is so far below everyone else's that even skimming's flat probability curve finds it worthwhile to jump straight to 595 in round 1,the margin available is large enough that a small probability gain still produces a higher $V$ than any cautious alternative. Once at 595, nobody else can get close, so X stops discounting (already near-certain to win) while Y, Z, W settle among themselves.
 
-### Experiment 2 — moderate margin advantage: X loses
+### Experiment 2,moderate margin advantage: X loses
 
 Same seller X, but with a much less extreme $p_{\min}$ (660 instead of 100), and Z/W starting more expensive:
 
@@ -247,6 +247,37 @@ Round 2: X=796.0, Y=750, Z=860.875, W=788.44
 Winner: Y at 750
 ```
 
-X still has the lowest $p_{\min}$ (660) of the four, but loses. `skimming`'s flat sensitivity ($s\approx8.11$) means discounting further barely improves win probability — at 796, the marginal probability gain no longer outweighs the margin given up, so X stops well short of its own floor. A large potential margin is necessary but not sufficient: it only gets used if the seller's sensitivity is steep enough to chase it.
+X still has the lowest $p_{\min}$ (660) of the four, but loses. `skimming`'s flat sensitivity ($s\approx8.11$) means discounting further barely improves win probability,at 796, the marginal probability gain no longer outweighs the margin given up, so X stops well short of its own floor. A large potential margin is necessary but not sufficient: it only gets used if the seller's sensitivity is steep enough to chase it.
 
-**Takeaway:** whether a low $p_{\min}$ turns into a win depends on the interaction between how large the margin advantage is and how steep the seller's strategy curve is — not on $p_{\min}$ alone.
+**Takeaway:** whether a low $p_{\min}$ turns into a win depends on the interaction between how large the margin advantage is and how steep the seller's strategy curve is,not on $p_{\min}$ alone.
+
+## Is higher lambda_time always better for the buyer?
+
+Two real phenomena worth knowing before choosing a `lambda_time` value,neither is a bug, both are consequences of how the algorithm works.
+
+### Phenomenon 1,non-monotonic price (15 sellers)
+
+| lambda_time | Final price | Rounds |
+|---|---|---|
+| 0.0 | 814.14 | 7 |
+| 0.1 | 782.37 | 11 |
+| 0.5 | 766.22 | 6 |
+| 0.7 | **765.00** | 6 |
+| 0.8 | **779.85** | 5 |
+
+Price generally improves as `lambda_time` rises,but not always. Between 0.7 and 0.8 it gets *worse* (765.00 → 779.85). The negotiation loop stops as soon as *no* seller discounts in an entire round,with higher `lambda_time`, every seller (not just the one you're tracking) feels stronger pressure to settle, so competitors can hit their own floor or local optimum one round sooner, cutting the loop short before the seller you're watching would have discounted further at a slightly lower `lambda_time`.
+
+### Phenomenon 2,saturation at the seller's floor (350 sellers)
+
+| lambda_time | Winner | Final price | Rounds |
+|---|---|---|---|
+| 0.0 | Seller_341 | 690.44 | 10 |
+| 0.1 | Seller_075 | 648.096 | 13 |
+| 0.5 | Seller_075 | 648.096 | 6 |
+| 0.7–1.0 | Seller_075 | 648.096 (identical) | 5 |
+
+From `lambda_time=0.1` onward, the final price is **exactly identical**,648.096, matching Seller_075's own `min_price` exactly (`starting_price=810.12, min_margin=0.2` → `810.12×0.8=648.096`). Once a seller hits its own floor, no amount of additional `lambda_time` can push it lower,it simply has no margin left to give. Beyond that point, raising `lambda_time` only speeds up *how many rounds it takes to get there*, not *where it ends up*.
+
+### Takeaway
+
+`lambda_time` reliably makes negotiations converge faster, and *usually*,but not always,produces a better price for the buyer. Two failure modes to be aware of: (1) an overly high value can make the loop stop early because *other* sellers settle first, occasionally locking in a worse price than a slightly lower value would have; (2) once the winning seller reaches its own floor, further increases only save rounds, not money. Neither invalidates `lambda_time` as a tool,but "urgent = always better price" would be an overpromise a tiered convenience layer (e.g. `--urgency`) should not make.
