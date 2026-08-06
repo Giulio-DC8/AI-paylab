@@ -138,3 +138,67 @@ The engine is agnostic to what the price represents — the same math works for 
 ## 9. `--max-rounds` guidance
 
 The default (5) is enough for 2-3 sellers. With more participants — especially several using `penetration` — negotiation may still be actively converging when the round limit cuts it off. Observed: 15 sellers with 5 rounds left two aggressive sellers still chasing each other; raising to 30 rounds showed they stabilize on their own around round 7 — the cutoff, not an unresolved conflict, was the cause.
+
+
+
+## Worked example: 4 sellers, round by round
+
+Four sellers, `lambda_time=0` (no time cost, for simplicity):
+
+| Seller | starting_price | min_margin | $p_{\min}$ | strategy |
+|---|---|---|---|---|
+| A | 1000 | 0.3 | 700 | skimming |
+| B | 900 | 0.1 | 810 | standard |
+| C | 850 | 0.2 | 680 | penetration |
+| D | 950 | 0.15 | 807.5 | standard |
+
+**Round 0:** starting prices, no discounting yet.
+
+**Round 1, step 1 — the buyer computes $p_c$:**
+
+$$p_c^{(1)} = \min(1000, 900, 850, 950) = 850 \quad (\text{C's price})$$
+
+C already has the lowest price, so C does nothing this round. A, B, and D must each react, all against the same $p_c = 850$ — none of them knows this number came from C specifically.
+
+**Round 1, detailed calculation for B** (starting_price=900, $p_{\min}$=810, standard strategy, $s\approx21.97$):
+
+For candidate $p=855$ (one of the 21 candidates generated in step 8):
+
+$$\text{gap}(855) = \frac{855-850}{850} \approx 0.00588$$
+
+$$P_{\text{win}}(855) = \frac{1}{1+e^{21.97\times0.00588}} \approx 0.468$$
+
+$$\text{Margin}(855) = 855-810 = 45$$
+
+$$V(855,\,1) = 0.468 \times 45 \approx 21.05 \quad (\lambda=0,\text{ so no time-cost term})$$
+
+Compared to staying put at 900:
+
+$$\text{gap}(900)\approx0.0588,\quad P_{\text{win}}(900)\approx0.216,\quad \text{Margin}(900)=90$$
+
+$$V(900,\,1) \approx 0.216\times90 \approx 19.44$$
+
+855 beats 900 (21.05 > 19.44). After checking the remaining 19 candidates, suppose the best one lands near 856 — **B discounts to 856**.
+
+**Round 1 result (same procedure applied to A and D):**
+
+| Seller | Price after round 1 |
+|---|---|
+| A | 1000 → 960 (far from the market, skimming — discounts cautiously) |
+| B | 900 → 856 |
+| C | 850 (didn't need to react) |
+| D | 950 → 870 |
+
+**Round 2, step 1:**
+
+$$p_c^{(2)} = \min(960, 856, 850, 870) = 850 \quad (\text{still C})$$
+
+C remains the target; A, B, D repeat the whole procedure from their new prices, now with $t=2$.
+
+**The loop continues** until nobody discounts in an entire round, then:
+
+$$\text{winner} = \arg\min\big(p_A^{(T)},\, p_B^{(T)},\, p_C^{(T)},\, p_D^{(T)}\big)$$
+
+In this scenario, C — which started cheapest and never needed to discount — is very likely to win at 850, unless another seller manages to undercut it.
+
+**The key thing to notice:** every seller runs the *exact same* calculation (steps 2–9), using only its *own* numbers ($p_{\text{current}}$, $p_{\min}$, $s$) — nobody ever computes anything "against" a specific named competitor. Everyone computes only against the single number $p_c$ the buyer communicates that round.
