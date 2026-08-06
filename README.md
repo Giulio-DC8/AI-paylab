@@ -122,12 +122,13 @@ Every payment simulation produces a **receipt signed with Ed25519** (real public
 | `paylab negotiate-and-choose --sellers file.json --preferences "..." [--top-n N] [--max-rounds N]` | Negotiate across all sellers deterministically, then let an LLM choose among the top N finalists based on natural-language preferences |
 | `paylab stream --protocol X --merchant M ...` | Simulate a per-request (Lightning L402) or continuous-streaming (Web Monetization) micropayment |
 | `paylab check-access --merchant M ...` | Check API key/quota access (traditional pre-paid credential model — no real-time negotiation, only a validity/credit check) |
+| `paylab negotiate --sellers file.json [--max-rounds N] [--lambda-time L | --urgency patient/moderate/urgent]` | Run a multi-round negotiation between sellers, each maximizing expected value at every round (default: 5 rounds, no time cost) |
 
 ## Negotiation model
 
 Three documents, three roles:
 - [`docs/protocol-spec.md`](docs/protocol-spec.md) — the protocol itself, language-agnostic: Buyer/Seller roles, message flow, properties (floor safety, monotonicity, bounded rounds), convergence, and how future market mechanisms (`ReverseAuctionProtocol`, `EnglishAuctionProtocol`, ...) plug into the same `MarketProtocol` interface.
-- [`docs/negotiation.md`](docs/negotiation.md) — the math: the expected-value formula, why it's a logistic function, how `core/calibration.py` derives the parameters with `scipy.optimize` instead of hand-picking them, worked examples verified by hand, and the numerical precision bug that surfaced when extending this to rate-based (per-request) negotiation.
+- [`docs/negotiation.md`](docs/negotiation.md) — the math: the expected-value formula, why it's a logistic function, how `core/calibration.py` derives the parameters with `scipy.optimize` instead of hand-picking them, the numerical precision bug that surfaced when extending this to rate-based (per-request) negotiation, the optional time-value-of-waiting cost (`--lambda-time` or the `--urgency patient/moderate/urgent` shortcut, settable per-seller in JSON), and two documented edge cases (non-monotonic price, floor saturation) worth knowing before assuming "more urgency = better price."
 - [`docs/benchmarks.md`](docs/benchmarks.md) — reproducible time/memory/round-count measurements from 2 to 350 sellers.
 
 ### Stable API
@@ -238,7 +239,7 @@ pip install -e ".[dev]"
 pytest tests/ -v
 ```
 
-33 tests covering receipt signing, the expected-value negotiation engine and its protocol invariants (floor safety, convergence, single-seller no-op, hundreds-of-sellers scale), parameter calibration, protocol routing/error handling, the `NegotiationProtocol`/`simulate()` wrapper layer, per-unit/streaming payments, rate-based negotiation, traditional API key/quota access control, and time-discounted negotiation.
+35 tests covering receipt signing, the expected-value negotiation engine, parameter calibration, protocol routing/error handling, per-unit/streaming payments, rate-based negotiation, traditional API key/quota access control, time-cost-based negotiation, urgency profiles, and the stable NegotiationProtocol/Buyer/simulate() API surface.
 
 ## Roadmap
 
