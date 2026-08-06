@@ -51,6 +51,14 @@ using `scipy.optimize.minimize_scalar`, with design targets at a 5% price gap:
 
 ## 4. Margin
 
+### Where $p_{\min}$ comes from
+
+$$p_{\min} = p_{\text{starting}} \times (1 - \text{min\_margin})$$
+
+min_price = starting_price * (1 - min_margin)
+
+Fixed once, at `Seller` creation - never recalculated during the negotiation. `min_margin` represents the maximum discount the seller (or its owner) is willing to concede from the listed starting price, decided before the negotiation begins. It is an exogenous constraint, not something derived from probability or expected value: whatever pressure the negotiation applies (competition, time cost via `lambda_time`), the seller never crosses this floor - verified explicitly by `test_seller_never_discounts_below_min_price` and `test_lambda_time_never_crosses_minimum_price`.
+
 $$\text{Margin}(p) = p - p_{\min}$$
 
 ```
