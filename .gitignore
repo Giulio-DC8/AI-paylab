@@ -20,3 +20,6 @@ dist/
 
 # System files
 .DS_Store
+
+CLAUDE.md
+git rm --cached CLAUDE.md
