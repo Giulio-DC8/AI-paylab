@@ -73,10 +73,11 @@ At every round, the seller generates 20 candidate prices between its current pri
 
 By default there's no cost to continuing to negotiate. With `lambda_time` ($\lambda$) set above 0:
 
-$$\text{EV}(p, t) = P_{\text{win}}(p) \cdot \text{Margin}(p) - \lambda \cdot t \cdot \big(1 - P_{\text{win}}(p)\big) \cdot \text{Margin}(p)$$
+$$\underbrace{\text{V}(p, t)}_{\text{expected value}} = \underbrace{P_{\text{win}}(p) \cdot \text{Margin}(p)}_{\text{utile atteso}} \;-\; \underbrace{\lambda \cdot t \cdot \big(1 - P_{\text{win}}(p)\big) \cdot \text{Margin}(p)}_{\text{costo di rimanere fuori mercato al round } t}$$
 
 ```
-EV(price, round) = P_win * margin - lambda_time * round * (1 - P_win) * margin
+V(price, round) = [P_win * margin]              <- utile atteso
+                 - [lambda_time * round * (1 - P_win) * margin]   <- costo di rimanere fuori mercato al round t
 ```
 
 where $t$ is the current round number. The penalty term is proportional to **how far the price is from the market** ($1-P_{\text{win}}$), not to time alone:

@@ -29,14 +29,17 @@ def estimate_win_probability(price, competitor_price, sensitivity=5.0):
 
 def expected_value(price, competitor_price, min_price, sensitivity, round_number=0, lambda_time=0.0):
     """
-    EV(p, t) = P_win(p) * Margin(p) - lambda * t * (1 - P_win(p)) * Margin(p)
+    V(p, t) = [P_win(p) * Margin(p)]  -  [lambda * t * (1 - P_win(p)) * Margin(p)]
+               ^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                  utile atteso           costo di rimanere fuori mercato al round t
 
-    The second term is the cost of waiting: it grows with how many
-    rounds have passed (t) and with how uncompetitive the price
-    currently is (1 - P_win). A price close to the competitor's
-    (P_win near 1) costs almost nothing to hold; a price far from
-    the market (P_win near 0) becomes increasingly costly to keep
-    round after round.
+    The second term is NOT a generic time cost - it's the cost of
+    staying at an uncompetitive price for another round. It grows
+    with how many rounds have passed (t) AND with how uncompetitive
+    the price currently is (1 - P_win): a price close to the
+    competitor's (P_win near 1) costs almost nothing to hold each
+    round; a price far from the market (P_win near 0) becomes
+    increasingly costly to maintain round after round.
 
     At lambda_time=0.0 (default), the second term is always exactly
     zero - identical to the original no-time-cost behavior, by
