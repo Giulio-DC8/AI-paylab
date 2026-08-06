@@ -82,7 +82,7 @@ At every round, the seller generates 20 candidate prices between its current pri
 
 By default there's no cost to continuing to negotiate. With `lambda_time` ($\lambda$) set above 0:
 
-$$\underbrace{\text{EV}(p, t)}_{\text{Expected Negotiation Value}} = \underbrace{P_{\text{win}}(p) \cdot \text{Margin}(p)}_{\text{Expected Profit}} - \underbrace{\lambda \cdot t \cdot \big(1 - P_{\text{win}}(p)\big) \cdot \text{Margin}(p)}_{\text{Cost of Remaining Out of the Market } t}$$
+$$\underbrace{\text{EV}(p, t)}_{\text{Expected Value}} = \underbrace{P_{\text{win}}(p) \cdot \text{Margin}(p)}_{\text{Expected Negotiation Value}} - \underbrace{\lambda \cdot t \cdot \big(1 - P_{\text{win}}(p)\big) \cdot \text{Margin}(p)}_{\text{Cost of Remaining Out of the Market } t}$$
 
 ```
 EV(price, round) = [P_win * margin]              <- Expected Negotiation Value
