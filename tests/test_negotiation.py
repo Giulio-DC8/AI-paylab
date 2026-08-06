@@ -1,3 +1,5 @@
+import random
+
 from core.negotiation import Seller, negotiate, estimate_win_probability
 
 
@@ -55,3 +57,67 @@ def test_negotiate_history_starts_at_round_zero_with_starting_prices():
 
     assert outcome["history"][0]["round"] == 0
     assert outcome["history"][0]["prices"] == {"A": 900, "B": 950}
+
+
+def test_single_seller_negotiation_is_a_noop():
+    """A single Seller has no competitor to react to: negotiate() must
+    return it as the winner at its unchanged starting price, without
+    ever discounting."""
+    seller = Seller(name="Solo", starting_price=1000, min_margin=0.2, strategy="standard")
+
+    outcome = negotiate([seller], max_rounds=10)
+
+    assert outcome["winner"] is seller
+    assert outcome["winner"].current_price == 1000
+    assert all(round_info["prices"]["Solo"] == 1000 for round_info in outcome["history"])
+
+
+def test_negotiation_converges_for_random_seller_pools():
+    """For randomly generated seller pools (fixed seeds, for
+    reproducibility), negotiation must settle - stop discounting -
+    well before a generous round budget is exhausted, not just for
+    the hand-picked two-seller scenarios above."""
+    strategies = ["skimming", "standard", "penetration"]
+    max_rounds = 100
+
+    for seed in (1, 2, 3):
+        rng = random.Random(seed)
+        sellers = [
+            Seller(
+                name=f"Seller_{i}",
+                starting_price=round(rng.uniform(800, 1000), 2),
+                min_margin=round(rng.uniform(0.05, 0.20), 3),
+                strategy=rng.choice(strategies),
+            )
+            for i in range(30)
+        ]
+
+        outcome = negotiate(sellers, max_rounds=max_rounds)
+
+        rounds_used = len(outcome["history"]) - 1
+        assert rounds_used < max_rounds, (
+            f"seed={seed}: still discounting after {max_rounds} rounds - did not converge"
+        )
+
+
+def test_negotiate_scales_to_hundreds_of_sellers():
+    """The engine must handle hundreds of sellers without errors and
+    still produce a coherent winner, matching the scale already
+    exercised manually via examples/generate_sellers.py (same field
+    ranges and seed)."""
+    strategies = ["skimming", "standard", "penetration"]
+    rng = random.Random(42)
+    sellers = [
+        Seller(
+            name=f"Seller_{i:03d}",
+            starting_price=round(rng.uniform(800, 1000), 2),
+            min_margin=round(rng.uniform(0.05, 0.20), 3),
+            strategy=rng.choice(strategies),
+        )
+        for i in range(350)
+    ]
+
+    outcome = negotiate(sellers, max_rounds=30)
+
+    all_prices = [s.current_price for s in sellers]
+    assert outcome["winner"].current_price == min(all_prices)

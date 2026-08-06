@@ -1,12 +1,13 @@
 [project]
 name = "agent-paylab"
-version = "0.1.0"
+version = "1.0.0"
 description = "Open source sandbox for simulating agentic multi-protocol payments"
 requires-python = ">=3.11"
 dependencies = ["cryptography", "scipy"]
 
 [project.optional-dependencies]
 ai = ["google-genai"]
+dev = ["pytest"]
 
 [project.scripts]
 paylab = "core.cli:main"
@@ -17,3 +18,6 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = ["core", "protocols", "protocols.x402", "protocols.ap2", "protocols.mpp", "protocols.visatap", "protocols.mastercardpay", "protocols.payforcrawl", "protocols.lightning_l402", "protocols.web_monetization", "protocols.api_key_quota", "receipt"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

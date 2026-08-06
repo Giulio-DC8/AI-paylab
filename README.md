@@ -125,7 +125,19 @@ Every payment simulation produces a **receipt signed with Ed25519** (real public
 
 ## Negotiation model
 
-See [`docs/negotiation.md`](docs/negotiation.md) for the full explanation: the expected-value formula, why it's a logistic function, how `core/calibration.py` derives the parameters with `scipy.optimize` instead of hand-picking them, and the numerical precision bug that surfaced when extending this to rate-based (per-request) negotiation.
+Three documents, three roles:
+- [`docs/protocol-spec.md`](docs/protocol-spec.md) — the protocol itself, language-agnostic: Buyer/Seller roles, message flow, properties (floor safety, monotonicity, bounded rounds), convergence, and how future market mechanisms (`ReverseAuctionProtocol`, `EnglishAuctionProtocol`, ...) plug into the same `MarketProtocol` interface.
+- [`docs/negotiation.md`](docs/negotiation.md) — the math: the expected-value formula, why it's a logistic function, how `core/calibration.py` derives the parameters with `scipy.optimize` instead of hand-picking them, worked examples verified by hand, and the numerical precision bug that surfaced when extending this to rate-based (per-request) negotiation.
+- [`docs/benchmarks.md`](docs/benchmarks.md) — reproducible time/memory/round-count measurements from 2 to 350 sellers.
+
+### Stable API
+
+Besides the CLI, the negotiation engine is usable as a library, at two levels:
+- **Raw**: `from core.negotiation import Seller, negotiate` — the free functions, unchanged since before this API layer existed.
+- **Wrapped**: `from core.market_protocol import NegotiationProtocol` — `NegotiationProtocol().run(sellers, max_rounds=5)` returns a typed `NegotiationResult` (`.winner`, `.history`) instead of a raw dict. This is the reference implementation of `MarketProtocol`, the interface future market mechanisms will share (see `docs/protocol-spec.md` §7).
+- Payments are similarly usable as a library via `core.router.simulate(protocol, merchant, amount)` (the same dispatch `paylab simulate` uses) and the AI-assisted buyer via `core.buyer.Buyer(preferences=...).choose(sellers)`.
+
+None of this changes what `negotiate()`, `Seller`, or the CLI already did — it's an additive, typed layer on top.
 
 ## AI-assisted decisions (experimental)
 
@@ -135,7 +147,7 @@ See [`docs/negotiation.md`](docs/negotiation.md) for the full explanation: the e
 
 ## Buyer component
 
-`core/buyer.py`'s `negotiate_and_choose(sellers, buyer_preferences, top_n=5, max_rounds=30)` is meant to be imported directly by developers building their own buyer agent, not just used through the CLI wrapper above.
+`core/buyer.py`'s `negotiate_and_choose(sellers, buyer_preferences, top_n=5, max_rounds=30)` is meant to be imported directly by developers building their own buyer agent, not just used through the CLI wrapper above. `Buyer` (same module) is a thin stateful wrapper around it — `Buyer(preferences=..., top_n=5, max_rounds=30).choose(sellers)` — for callers who'd rather configure once and call repeatedly. Both inherit the same AI-path limitation: non-deterministic, requires `GEMINI_API_KEY`, not covered by automated tests.
 
 ## Protocols supported (all mocked)
 
@@ -178,12 +190,13 @@ The private key (`receipt/private_key.pem`) is generated locally on first use an
 ```
 agent-paylab/
 ├── core/
-│   ├── cli.py            # command-line entry point (all commands)
-│   ├── router.py         # choose_and_pay(), choose_best_offer()
-│   ├── negotiation.py    # Seller class (expected-value based), negotiate()
-│   ├── calibration.py    # scipy-based calibration of negotiation parameters
-│   ├── buyer.py          # negotiate_and_choose() - deterministic + AI pipeline
-│   └── ai_agent.py       # experimental LLM-based decision engine
+│   ├── cli.py             # command-line entry point (all commands)
+│   ├── router.py          # choose_and_pay(), choose_best_offer(), simulate()
+│   ├── negotiation.py     # Seller class (expected-value based), negotiate() - frozen reference math
+│   ├── market_protocol.py # MarketProtocol base + NegotiationProtocol wrapper, typed results
+│   ├── calibration.py     # scipy-based calibration of negotiation parameters
+│   ├── buyer.py           # negotiate_and_choose(), Buyer class - deterministic + AI pipeline
+│   └── ai_agent.py        # experimental LLM-based decision engine
 ├── protocols/
 │   ├── x402/mock.py
 │   ├── ap2/mock.py
@@ -199,7 +212,8 @@ agent-paylab/
 │   └── keys.py
 ├── tests/
 │   ├── test_receipt.py             # Ed25519 signing/verification
-│   ├── test_negotiation.py         # expected-value engine, win probability, Seller
+│   ├── test_negotiation.py         # expected-value engine, win probability, Seller, protocol invariants
+│   ├── test_market_protocol.py     # NegotiationProtocol/simulate() wrapper-equivalence
 │   ├── test_calibration.py         # scipy-based parameter calibration
 │   ├── test_router.py              # protocol selection, offer comparison, error handling
 │   ├── test_rate_negotiation.py    # negotiation engine at per-request/per-second rate scale
@@ -209,16 +223,22 @@ agent-paylab/
 ├── examples/
 │   ├── generate_sellers.py   # generate random seller pools for scale testing
 │   └── ai_demo.py            # standalone ai_agent.py demo
+├── benchmarks/
+│   └── negotiation_bench.py  # reproducible time/memory/round-count measurements
+├── docs/
+│   ├── protocol-spec.md      # language-agnostic protocol spec (roles, flow, properties, extensibility)
+│   ├── negotiation.md        # math reference (formulas, calibration, worked examples)
+│   └── benchmarks.md         # measured results
 └── pyproject.toml
 ```
 ## Testing
 
 ```bash
-pip install pytest
+pip install -e ".[dev]"
 pytest tests/ -v
 ```
 
-28 tests covering receipt signing, the expected-value negotiation engine, parameter calibration, protocol routing/error handling, per-unit/streaming payments, rate-based negotiation, traditional API key/quota access control, and time-discounted negotiation.
+33 tests covering receipt signing, the expected-value negotiation engine and its protocol invariants (floor safety, convergence, single-seller no-op, hundreds-of-sellers scale), parameter calibration, protocol routing/error handling, the `NegotiationProtocol`/`simulate()` wrapper layer, per-unit/streaming payments, rate-based negotiation, traditional API key/quota access control, and time-discounted negotiation.
 
 ## Roadmap
 

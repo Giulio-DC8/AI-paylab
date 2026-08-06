@@ -1,4 +1,5 @@
 from protocols.x402.mock import pay as pay_x402
+from protocols.ap2.mock import pay as pay_ap2
 from protocols.mpp.mock import pay as pay_mpp
 from protocols.visatap.mock import pay as pay_visatap
 from protocols.mastercardpay.mock import pay as pay_mastercardpay
@@ -58,3 +59,40 @@ def choose_best_offer(offers, budget_limit=1000.0):
     chosen = min(approved, key=lambda r: r["total_cost"]) if approved else None
 
     return {"chosen": chosen, "attempts": results}
+
+
+def simulate(protocol, merchant, amount):
+    """
+    Runs a single payment on the one-shot protocol named by `protocol`.
+
+    Covers the same 6 protocols as `paylab simulate` (x402, ap2, mpp,
+    visatap, mastercardpay, payforcrawl) - including `ap2`, which is
+    deliberately excluded from PROTOCOL_FUNCTIONS/choose_and_pay/
+    choose_best_offer above (it authorizes but doesn't execute a
+    payment, see UnsupportedProtocolError's docstring). This is why
+    simulate() uses its own dispatch instead of PROTOCOL_FUNCTIONS.
+
+    Raises UnsupportedProtocolError for any other protocol name -
+    including the streaming protocols (lightning_l402, web_monetization,
+    served by `paylab stream`) and api_key_quota (served by
+    `paylab check-access`), which don't fit this pay(merchant, amount)
+    contract at all.
+    """
+    if protocol == "x402":
+        return pay_x402(merchant=merchant, amount=amount)
+    elif protocol == "ap2":
+        return pay_ap2(merchant=merchant, amount=amount)
+    elif protocol == "mpp":
+        return pay_mpp(merchant=merchant, amount=amount)
+    elif protocol == "visatap":
+        return pay_visatap(merchant=merchant, amount=amount)
+    elif protocol == "mastercardpay":
+        return pay_mastercardpay(merchant=merchant, amount=amount)
+    elif protocol == "payforcrawl":
+        return pay_payforcrawl(merchant=merchant, amount=amount)
+
+    raise UnsupportedProtocolError(
+        f"Protocol '{protocol}' is not valid for 'simulate'. "
+        f"Valid protocols: x402, ap2, mpp, visatap, mastercardpay, payforcrawl. "
+        f"lightning_l402/web_monetization use 'paylab stream'; api_key_quota uses 'paylab check-access'."
+    )

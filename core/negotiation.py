@@ -29,9 +29,9 @@ def estimate_win_probability(price, competitor_price, sensitivity=5.0):
 
 def expected_value(price, competitor_price, min_price, sensitivity, round_number=0, lambda_time=0.0):
     """
-    V(p, t) = [P_win(p) * Margin(p)]  -  [lambda * t * (1 - P_win(p)) * Margin(p)]
-               ^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                  utile atteso           costo di rimanere fuori mercato al round t
+    EV(p, t) = [P_win(p) * Margin(p)]  -  [lambda * t * (1 - P_win(p)) * Margin(p)]
+                ^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   utile atteso           costo di rimanere fuori mercato al round t
 
     The second term is NOT a generic time cost - it's the cost of
     staying at an uncompetitive price for another round. It grows

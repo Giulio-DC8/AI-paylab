@@ -1,16 +1,10 @@
 import argparse
 import json
-from protocols.x402.mock import pay as pay_x402
-from protocols.ap2.mock import pay as pay_ap2
-from protocols.mpp.mock import pay as pay_mpp
-from protocols.visatap.mock import pay as pay_visatap
-from protocols.mastercardpay.mock import pay as pay_mastercardpay
-from protocols.payforcrawl.mock import pay as pay_payforcrawl
 from protocols.lightning_l402.mock import pay_per_request
 from protocols.web_monetization.mock import pay_stream
 from protocols.api_key_quota.mock import check_access
 from receipt.generator import create_receipt
-from core.router import choose_and_pay, choose_best_offer
+from core.router import choose_and_pay, choose_best_offer, simulate as run_simulate
 from core.negotiation import Seller, negotiate
 from core.buyer import negotiate_and_choose
 
@@ -103,19 +97,7 @@ def main():
     args = parser.parse_args()
 
     if args.command == "simulate":
-        if args.protocol == "x402":
-            result = pay_x402(merchant=args.merchant, amount=args.amount)
-        elif args.protocol == "ap2":
-            result = pay_ap2(merchant=args.merchant, amount=args.amount)
-        elif args.protocol == "mpp":
-            result = pay_mpp(merchant=args.merchant, amount=args.amount)
-        elif args.protocol == "visatap":
-            result = pay_visatap(merchant=args.merchant, amount=args.amount)
-        elif args.protocol == "mastercardpay":
-            result = pay_mastercardpay(merchant=args.merchant, amount=args.amount)
-        elif args.protocol == "payforcrawl":
-            result = pay_payforcrawl(merchant=args.merchant, amount=args.amount)
-
+        result = run_simulate(protocol=args.protocol, merchant=args.merchant, amount=args.amount)
         print_result(result)
 
     elif args.command == "auto":

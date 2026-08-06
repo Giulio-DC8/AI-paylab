@@ -1,4 +1,6 @@
-# Negotiation engine 
+# Negotiation engine
+
+This is the math reference: formulas, calibration, and worked examples. For the protocol at the level of roles, message flow, and guarantees (useful if you're reimplementing it outside Python), see [`protocol-spec.md`](protocol-spec.md).
 
 Sellers don't apply a fixed discount step. At every round, each `Seller` evaluates a range of candidate prices and picks the one that maximizes **expected value**.
 
@@ -16,7 +18,7 @@ Positive if $p$ is more expensive than the competitor, negative if cheaper, zero
 
 ## 2. Win probability
 
-The seller does not know the buyer's decision rule.Therefore it models the probability of winning through a subjective logistic belief.
+The seller does not know the buyer's decision rule. Therefore it models the probability of winning through a subjective logistic belief.
 A logistic function of the gap:
 
 $$P_{\text{win}}(p) = \frac{1}{1 + e^{s \cdot \text{gap}(p)}}$$
