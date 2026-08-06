@@ -16,6 +16,7 @@ Positive if $p$ is more expensive than the competitor, negative if cheaper, zero
 
 ## 2. Win probability
 
+The seller does not know the buyer's decision rule.Therefore it models the probability of winning through a subjective logistic belief.
 A logistic function of the gap:
 
 $$P_{\text{win}}(p) = \frac{1}{1 + e^{s \cdot \text{gap}(p)}}$$
@@ -81,11 +82,11 @@ At every round, the seller generates 20 candidate prices between its current pri
 
 By default there's no cost to continuing to negotiate. With `lambda_time` ($\lambda$) set above 0:
 
-$$\underbrace{\text{EV}(p, t)}_{\text{Expected Value}} = \underbrace{P_{\text{win}}(p) \cdot \text{Margin}(p)}_{\text{Expected Profit}} - \underbrace{\lambda \cdot t \cdot \big(1 - P_{\text{win}}(p)\big) \cdot \text{Margin}(p)}_{\text{Cost of Remaining Out of the Market } t}$$
+$$\underbrace{\text{EV}(p, t)}_{\text{Expected Negotiation Value}} = \underbrace{P_{\text{win}}(p) \cdot \text{Margin}(p)}_{\text{Expected Profit}} - \underbrace{\lambda \cdot t \cdot \big(1 - P_{\text{win}}(p)\big) \cdot \text{Margin}(p)}_{\text{Cost of Remaining Out of the Market } t}$$
 
 ```
-EV(price, round) = [P_win * margin]              <- utile atteso
-                 - [lambda_time * round * (1 - P_win) * margin]   <- costo di rimanere fuori mercato al round t
+EV(price, round) = [P_win * margin]              <- Expected Negotiation Value
+                 - [lambda_time * round * (1 - P_win) * margin]   <- Cost of Remaining Out of the Market t
 ```
 
 where $t$ is the current round number. The penalty term is proportional to **how far the price is from the market** ($1-P_{\text{win}}$), not to time alone:
