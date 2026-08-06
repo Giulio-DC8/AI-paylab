@@ -1,9 +1,3 @@
-# AI-paylab 
-
-**Agent-paylab is a local sandbox for prototyping how AI agents pay.** Simulate, compare, and negotiate payments across multiple agentic payment protocols, no real accounts, no API keys, no network calls.
-
-## See it in action
-
 # agent-paylab
 
 **How do you test an AI agent that needs to pay?**
@@ -31,9 +25,9 @@ Signed receipt (Ed25519)
 
 ## Why this project exists
 
-While exploring agentic commerce protocols (x402, AP2, MPP, and others), it became clear that everyone was building payment *rails*  , but almost nothing existed to prototype the *decision logic* of an agent locally: which seller to pick, how to negotiate, when a discount is actually worth it. `agent-paylab` was built to fill that gap.
+While exploring agentic commerce protocols (x402, AP2, MPP, and others), it became clear that everyone was building payment *rails* — but almost nothing existed to prototype the *decision logic* of an agent locally: which seller to pick, how to negotiate, when a discount is actually worth it. `agent-paylab` was built to fill that gap.
 
-The protocols are the medium. **The real subject is decision intelligence for agentic commerce**  , how an agent picks a seller, negotiates, and proves what it decided, independent of which rail eventually moves the money.
+The protocols are the medium. **The real subject is decision intelligence for agentic commerce** — how an agent picks a seller, negotiates, and proves what it decided, independent of which rail eventually moves the money.
 
 ## agent-paylab vs. the real thing
 
@@ -59,9 +53,9 @@ Round 2: {'Lufthansa': 900, 'Emirates': 878.75}
 --- Winner: Emirates at 878.75 ---
 ```
 
-Two sellers, two independent pricing strategies, negotiating by weighing expected value at every candidate price  , not a fixed discount step. This is the part most payment protocol demos don't show: not *how* an agent pays, but *how it decides who to pay*. Full math and calibration details: [`docs/negotiation.md`](docs/negotiation.md).
+Two sellers, two independent pricing strategies, negotiating by weighing expected value at every candidate price — not a fixed discount step. This is the part most payment protocol demos don't show: not *how* an agent pays, but *how it decides who to pay*. Full math and calibration details: [`docs/negotiation.md`](docs/negotiation.md).
 
-`agent-paylab` doesn't compete with x402, AP2, MPP, or any other payment protocol  , it's a development tool for the logic that decides *before* any of them get called.
+`agent-paylab` doesn't compete with x402, AP2, MPP, or any other payment protocol — it's a development tool for the logic that decides *before* any of them get called.
 
 ## Install
 
@@ -122,16 +116,10 @@ Every payment simulation produces a **receipt signed with Ed25519** (real public
 | `paylab simulate --protocol X --merchant M --amount N` | Simulate a single payment on the protocol you choose |
 | `paylab auto --merchant M --amount N` | Try all execution protocols, pick the one with the lowest fee |
 | `paylab compare --offers file.json` | Compare multiple seller/protocol offers, pick the lowest total cost (price + fee) |
-| `paylab negotiate --sellers file.json [--max-rounds N]` | Run a multi-round negotiation between sellers, each maximizing expected value at every round (default: 5 rounds) |
+| `paylab negotiate --sellers file.json [--max-rounds N] [--lambda-time L]` | Run a multi-round negotiation between sellers, each maximizing expected value at every round (default: 5 rounds, no time cost) |
 | `paylab negotiate-and-choose --sellers file.json --preferences "..." [--top-n N] [--max-rounds N]` | Negotiate across all sellers deterministically, then let an LLM choose among the top N finalists based on natural-language preferences |
 | `paylab stream --protocol X --merchant M ...` | Simulate a per-request (Lightning L402) or continuous-streaming (Web Monetization) micropayment |
-| `paylab check-access --merchant M ...` | Check API key/quota access (traditional pre-paid credential model  , no real-time negotiation, only a validity/credit check) |
-
-## Negotiation model
-
-Sellers don't apply a fixed discount. At every round, each `Seller` evaluates a range of candidate prices (from its current price down to its own minimum) and picks the one that maximizes **expected value**: `probability_of_winning(price) × remaining_margin(price)`. Win probability is a logistic function of the price gap to the competitor.
-
-Each `strategy` (`skimming`, `standard`, `penetration`) has its own `price_elasticity_belief`, how much a seller believes discounting improves its odds. These aren't hand-picked: `core/calibration.py` derives them with `scipy.optimize`, targeting a specific win probability at a 5% price gap (skimming stays confident even when pricier; penetration assumes being pricier hurts a lot, so it chases the competitor). Change the targets in `calibrate_strategies()` and the values used by `negotiate()` update automatically, nothing to copy by hand.
+| `paylab check-access --merchant M ...` | Check API key/quota access (traditional pre-paid credential model — no real-time negotiation, only a validity/credit check) |
 
 ## Negotiation model
 
@@ -153,35 +141,35 @@ Six single-transaction ("one-shot") protocols:
 
 | Protocol | What it represents | Notable field |
 |---|---|---|
-| `x402` | Direct payment rail over HTTP 402 (stablecoin-native) |  , |
+| `x402` | Direct payment rail over HTTP 402 (stablecoin-native) | — |
 | `mpp` | Card/fiat rail with pre-authorized sessions | `currency` |
 | `visatap` | Agent recognition inside the Visa card network | `agent_token` |
 | `mastercardpay` | Agent recognition inside the Mastercard network | `agent_credential` |
-| `payforcrawl` | Cloudflare Pay per Crawl, access to content/resources, not e-commerce | `zone` |
+| `payforcrawl` | Cloudflare Pay per Crawl — access to content/resources, not e-commerce | `zone` |
 | `ap2` | Authorization framework (mandate-based), not an execution rail | `mandate_id` |
 
-Plus two per-unit / continuous-streaming protocols, conceptually different from the six above (no single fixed amount, cost accumulates per request or per second):
+Plus two per-unit / continuous-streaming protocols, conceptually different from the six above (no single fixed amount — cost accumulates per request or per second):
 
 | Protocol | What it represents | Command |
 |---|---|---|
 | `lightning_l402` | Lightning Network L402: per-request micropayments bundling auth + payment via a macaroon token | `paylab stream --protocol lightning_l402 --cost-per-request 0.0001 --request-count 1000` |
 | `web_monetization` | W3C Web Monetization / Interledger Protocol: continuous background payment stream while a resource is consumed | `paylab stream --protocol web_monetization --rate-per-second 0.001 --duration-seconds 30` |
 
-Plus one traditional pre-paid access-control model, conceptually different from both categories above (payment already happened out-of-band, the request only checks validity/credit, it never negotiates or decides anything):
+Plus one traditional pre-paid access-control model, conceptually different from both categories above (payment already happened out-of-band — the request only checks validity/credit, it never negotiates or decides anything):
 
 | Protocol | What it represents | Command |
 |---|---|---|
 | `api_key_quota` | Traditional API Key / OAuth model: account and credit set up beforehand; each request just checks key validity, remaining credit, and rate limits (HTTP 200/401/403/429) | `paylab check-access --merchant WeatherAPI --credit-balance 10.0 --request-cost 0.01` |
 
-**Design note:** every mock captures only the core mechanic of the real protocol it represents, not the full specification. `x402`, `mpp`, `visatap`, `mastercardpay`, and `payforcrawl` are treated here as interchangeable execution rails for simplicity; in reality some of them (e.g. Visa card payments) are implemented as *methods within* MPP rather than fully separate protocols. `ap2` is currently exposed as a peer protocol in `simulate` for consistency, even though conceptually it authorizes a payment rather than executing one, it's excluded from `auto` and `compare` for that reason. `lightning_l402` and `web_monetization` are kept separate from `simulate`/`auto`/`compare`/`negotiate` on purpose: those commands assume a single fixed `amount`, while streaming protocols accumulate cost over requests or time, a genuinely different interface, not just another protocol name. A cleaner `paylab authorize` step for `ap2` is planned (see Roadmap).
+**Design note:** every mock captures only the core mechanic of the real protocol it represents, not the full specification. `x402`, `mpp`, `visatap`, `mastercardpay`, and `payforcrawl` are treated here as interchangeable execution rails for simplicity; in reality some of them (e.g. Visa card payments) are implemented as *methods within* MPP rather than fully separate protocols. `ap2` is currently exposed as a peer protocol in `simulate` for consistency, even though conceptually it authorizes a payment rather than executing one — it's excluded from `auto` and `compare` for that reason. `lightning_l402` and `web_monetization` are kept separate from `simulate`/`auto`/`compare`/`negotiate` on purpose: those commands assume a single fixed `amount`, while streaming protocols accumulate cost over requests or time — a genuinely different interface, not just another protocol name. A cleaner `paylab authorize` step for `ap2` is planned (see Roadmap).
 
 ## Receipts
 
 Every simulated payment, approved or rejected, produces a receipt signed with **Ed25519**:
-- `receipt/generator.py`, `create_receipt()` / `verify_receipt()`
-- `receipt/keys.py`, key generation and loading (auto-generated on first run; raises `IncompleteKeyPairError` if only one of the two key files is present, instead of silently regenerating and invalidating old receipts)
+- `receipt/generator.py` — `create_receipt()` / `verify_receipt()`
+- `receipt/keys.py` — key generation and loading (auto-generated on first run; raises `IncompleteKeyPairError` if only one of the two key files is present, instead of silently regenerating and invalidating old receipts)
 
-The private key (`receipt/private_key.pem`) is generated locally on first use and never leaves your machine, it's excluded from version control via `.gitignore`. Only the public key is needed to verify a receipt.
+The private key (`receipt/private_key.pem`) is generated locally on first use and never leaves your machine — it's excluded from version control via `.gitignore`. Only the public key is needed to verify a receipt.
 
 ## Project structure
 
@@ -214,7 +202,8 @@ agent-paylab/
 │   ├── test_router.py              # protocol selection, offer comparison, error handling
 │   ├── test_rate_negotiation.py    # negotiation engine at per-request/per-second rate scale
 │   ├── test_streaming_protocols.py # lightning_l402, web_monetization
-│   └── test_api_key_quota.py       # api_key_quota (HTTP 200/401/403/429)
+│   ├── test_api_key_quota.py       # api_key_quota (HTTP 200/401/403/429)
+│   └── test_time_cost.py           # time-discounted negotiation (lambda_time)
 ├── examples/
 │   ├── generate_sellers.py   # generate random seller pools for scale testing
 │   └── ai_demo.py            # standalone ai_agent.py demo
@@ -227,7 +216,7 @@ pip install pytest
 pytest tests/ -v
 ```
 
-25 tests covering receipt signing, the expected-value negotiation engine, parameter calibration, protocol routing/error handling, per-unit/streaming payments, rate-based negotiation, and traditional API key/quota access control.
+28 tests covering receipt signing, the expected-value negotiation engine, parameter calibration, protocol routing/error handling, per-unit/streaming payments, rate-based negotiation, traditional API key/quota access control, and time-discounted negotiation.
 
 ## Roadmap
 
@@ -236,7 +225,6 @@ pytest tests/ -v
 - Win probability currently depends only on price gap; could be extended to a feature vector (reputation, delivery time, stock, history) without changing the core expected-value model
 - Risk preference: expected value currently assumes risk neutrality (`probability × margin`); a `probability^alpha × margin^beta` formulation would let sellers be modeled as risk-averse, aggressive, or market-share-driven
 - Multi-step / non-myopic negotiation (agents that reason about future rounds, not just the current one)
-- Time-value of waiting (a seller might prefer a smaller profit now over a larger one later)
 - Cross-negotiation between one-shot and rate-based sellers (e.g. comparing a fixed flight price against a per-request API rate), would require an assumed request/time volume to convert a rate into a comparable total
 
 ## License

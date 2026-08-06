@@ -1,64 +1,130 @@
-\# Negotiation engine, the math
+# Negotiation engine — the math
 
+Sellers don't apply a fixed discount step. At every round, each `Seller` evaluates a range of candidate prices and picks the one that maximizes **expected value**.
 
+## 1. Price gap
 
-Sellers don't apply a fixed discount. At every round, each `Seller` evaluates a range of candidate prices (from its current price down to its own minimum) and picks the one that maximizes \*\*expected value\*\*: `probability\_of\_winning(price) × remaining\_margin(price)`. Win probability is a logistic function of the price gap to the competitor.
+For a candidate price $p$ against a competitor price $p_c$:
 
+$$\text{gap}(p) = \frac{p - p_c}{p_c}$$
 
+```
+gap = (price - competitor_price) / competitor_price
+```
 
-\## The formula
+Positive if $p$ is more expensive than the competitor, negative if cheaper, zero if equal.
 
+## 2. Win probability
 
+A logistic function of the gap:
 
-estimate\_win\_probability(gap, sensitivity) = 1 / (1 + exp(sensitivity \* gap))
+$$P_{\text{win}}(p) = \frac{1}{1 + e^{s \cdot \text{gap}(p)}}$$
 
+```
+P_win(p) = 1 / (1 + exp(sensitivity * gap))
+```
 
+where $s$ is the seller's `price_elasticity_belief`. Properties:
 
+- $P_{\text{win}} = 0.5$ when $\text{gap} = 0$ (equal price)
+- $P_{\text{win}} \to 1$ as $\text{gap} \to -\infty$ (much cheaper)
+- $P_{\text{win}} \to 0$ as $\text{gap} \to +\infty$ (much pricier)
+- Smooth, continuous, no discontinuity
 
+**Numerical stability:** for $|s \cdot \text{gap}| > 700$, the exponential is clamped to $P_{\text{win}}=0$ or $1$ directly, avoiding `OverflowError` on extreme gaps (e.g. a price 1000x the competitor's).
 
-A logistic function, chosen because it naturally gives 0.5 at equal prices and approaches 0 or 1 smoothly as the gap grows  , no hard threshold, no discontinuity.
+## 3. Calibrating sensitivity $s$
 
+$s$ is not hand-picked. `core/calibration.py` solves for it:
 
+$$s^* = \underset{s}{\arg\min} \left( P_{\text{win}}(\text{gap}=0.05,\, s) - P_{\text{target}} \right)^2$$
 
-\## Calibration, not guesswork
+using `scipy.optimize.minimize_scalar`, with design targets at a 5% price gap:
 
+| Strategy | $P_{\text{target}}$ | Resulting $s$ |
+|---|---|---|
+| `skimming` | 0.40 | ≈8.11 |
+| `standard` | 0.25 | ≈21.97 |
+| `penetration` | 0.10 | ≈43.94 |
 
+`skimming` stays confident even when pricier (flatter curve); `penetration` assumes being pricier hurts a lot, so it chases the competitor (steeper curve). Change the targets in `calibrate_strategies()` and these values update automatically — nothing to copy by hand.
 
-Each `strategy` (`skimming`, `standard`, `penetration`) has its own `price\_elasticity\_belief`, how much a seller believes discounting improves its odds. These aren't hand-picked: `core/calibration.py` derives them with `scipy.optimize.minimize\_scalar`, targeting a specific win probability at a 5% price gap:
+## 4. Margin
 
+$$\text{Margin}(p) = p - p_{\min}$$
 
+```
+margin = price - min_price
+```
 
-\- `skimming` → 40% (stays confident even when pricier)
+$p_{\min}$ is the seller's floor price, fixed at creation. Not real profit — $p_{\min}$ doesn't represent actual cost, just the seller's walk-away point.
 
-\- `standard` → 25% (middle ground)
+## 5. Expected value (base case, no time cost)
 
-\- `penetration` → 10% (assumes being pricier hurts a lot, chases the competitor)
+$$\text{EV}(p) = P_{\text{win}}(p) \cdot \text{Margin}(p)$$
 
+```
+EV(price) = P_win(price) * margin(price)
+```
 
+At every round, the seller generates 20 candidate prices between its current price and $p_{\min}$, computes $\text{EV}$ for each plus the "stay put" option, and picks the maximum.
 
-Currently ≈8.11 / 21.97 / 43.94 respectively. Change the targets in `calibrate\_strategies()` and the values used by `negotiate()` update automatically, nothing to copy by hand.
+## 6. Time-value of waiting (optional)
 
+By default there's no cost to continuing to negotiate. With `lambda_time` ($\lambda$) set above 0:
 
+$$\text{EV}(p, t) = P_{\text{win}}(p) \cdot \text{Margin}(p) \;-\; \lambda \cdot t \cdot \big(1 - P_{\text{win}}(p)\big) \cdot \text{Margin}(p)$$
 
-\## Grounded in real pricing theory
+```
+EV(price, round) = P_win * margin - lambda_time * round * (1 - P_win) * margin
+```
 
+where $t$ is the current round number. The penalty term is proportional to **how far the price is from the market** ($1-P_{\text{win}}$), not to time alone:
 
+- Price near the competitor's ($P_{\text{win}} \approx 1$) → penalty ≈ 0, costs almost nothing to hold
+- Price far from the market ($P_{\text{win}} \approx 0$) → penalty grows every round, increasingly expensive to maintain
 
-Rather than arbitrary rules, this mirrors established pricing strategy (Blythe, \*Fondamenti di Marketing\*, 2013, ch. 7; LIUC pricing strategy lecture notes): `skimming` mirrors market-skimming (patient, protects margin), `penetration` mirrors penetration pricing (aggressive, chases market share , at the real-world risk of a price war if a competitor matches it).
+**Why $\lambda=0$ is exactly backward-compatible:** the penalty term is multiplied by $\lambda$, so at $\lambda=0$ it is algebraically zero for every candidate — not just empirically close to the old behavior, but identical by construction.
 
+**Why this formulation works** (unlike three earlier attempts that didn't): the penalty depends on $P_{\text{win}}(p)$, which varies per candidate price — so it doesn't scale every option by the same constant. A uniform scaling (tried first) never changes which candidate has the highest value; this formulation can.
 
+### Observed calibration ($p_{\text{start}}=1000$, $p_{\min}=700$ for competitor, seller starts at 1000 vs. competitor at 700)
 
-\## Scale and precision
+| $\lambda$ | Rounds to converge | Final price |
+|---|---|---|
+| 0.02 | doesn't converge in 30 rounds | ~721 (still discounting) |
+| 0.05 | 20 | 700.0 |
+| 0.10 | 10 | 700.0 |
+| 0.50 | 2 | 700.0 |
 
+**Safety check:** even at $\lambda=0.5$, a seller with $p_{\min}=710$ (unreachable, above the competitor's 700) stops exactly at 710 and never crosses it — the floor constraint holds regardless of time pressure.
 
+## 7. Full negotiation loop
 
-Tested with 2, 15, and 350 sellers (`examples/generate\_sellers.py`), converging without performance issues (350 sellers settle around round 10). The engine is also agnostic to what the price represents  , the same math works for a total amount (900) or a per-request rate (0.00012), since only the relative gap matters, not the absolute scale. One real bug surfaced at rate scale: `min\_price` and candidate prices were rounded to 2 decimals, silently collapsing tiny rates to zero  , fixed by rounding to 8 decimals instead.
+```
+history[0] = starting prices
 
+for round t = 1 to max_rounds:
+    best_price = min(price across all sellers)
+    any_discount = False
 
+    for each seller with price > best_price:
+        seller.counter_offer(best_price, round_number=t)
+        # picks argmax over 20 candidates + "stay put",
+        # using EV(p, t) from section 5 or 6
 
-\## A note on `--max-rounds`
+    record history[t]
+    if no seller discounted this round: break
 
+winner = seller with lowest final price
+```
 
+## 8. Rate-based negotiation
 
-The default (5) is enough for small scenarios (2-3 sellers), but with more participants  , especially several using `penetration`  , the negotiation may still be actively converging when the round limit cuts it off. At 15 sellers with 5 rounds, two aggressive sellers were still chasing each other's price down; raising `--max-rounds` to 30 showed they stabilize on their own around round 7  , the cutoff, not an unresolved conflict, was why it looked unfinished at the default.
+The engine is agnostic to what the price represents — the same math works for a total amount (900) or a per-request rate (0.00012), since only the relative gap matters, not the absolute scale.
 
+**Bug found and fixed:** `min_price` and candidate prices were originally rounded to 2 decimal places, which silently collapsed tiny rates to zero (`round(0.00012, 2) == 0.0`), blocking any discount. Fixed by rounding to 8 decimals instead — no change for normal-scale prices.
+
+## 9. `--max-rounds` guidance
+
+The default (5) is enough for 2-3 sellers. With more participants — especially several using `penetration` — negotiation may still be actively converging when the round limit cuts it off. Observed: 15 sellers with 5 rounds left two aggressive sellers still chasing each other; raising to 30 rounds showed they stabilize on their own around round 7 — the cutoff, not an unresolved conflict, was the cause.

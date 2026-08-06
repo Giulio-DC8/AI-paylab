@@ -20,32 +20,34 @@ def estimate_win_probability(price, competitor_price, sensitivity=5.0):
     exponent = sensitivity * gap
 
     if exponent > 700:
-        return 0.0  # competitor is vastly cheaper: winning is nearly impossible
+        return 0.0
     if exponent < -700:
-        return 1.0  # competitor is vastly more expensive: winning is nearly certain
+        return 1.0
 
     return 1 / (1 + math.exp(exponent))
 
 
-def expected_value(price, competitor_price, min_price, sensitivity):
+def expected_value(price, competitor_price, min_price, sensitivity, round_number=0, lambda_time=0.0):
     """
-    Expected value of offering a given price: probability of winning
-    at that price, multiplied by the remaining margin (how far above
-    the seller's own minimum acceptable price - not real profit,
-    since min_price doesn't represent actual cost).
+    EV(p, t) = P_win(p) * Margin(p) - lambda * t * (1 - P_win(p)) * Margin(p)
+
+    The second term is the cost of waiting: it grows with how many
+    rounds have passed (t) and with how uncompetitive the price
+    currently is (1 - P_win). A price close to the competitor's
+    (P_win near 1) costs almost nothing to hold; a price far from
+    the market (P_win near 0) becomes increasingly costly to keep
+    round after round.
+
+    At lambda_time=0.0 (default), the second term is always exactly
+    zero - identical to the original no-time-cost behavior, by
+    construction (not just approximately).
     """
     probability = estimate_win_probability(price, competitor_price, sensitivity)
     margin = price - min_price
-    return probability * margin
+    base_ev = probability * margin
+    time_cost = lambda_time * round_number * (1 - probability) * margin
+    return base_ev - time_cost
 
-
-# Computed automatically by core/calibration.py instead of being
-# hand-picked - at a 5% price gap, these produce win probabilities of
-# roughly 40%/25%/10% respectively (skimming stays confident even
-# when pricier, penetration fears being pricier a lot and therefore
-# chases the price). If you change the targets in
-# calibrate_strategies(), these values update automatically on next
-# run - nothing to copy by hand.
 STRATEGY_PRICE_ELASTICITY_BELIEF = calibrate_strategies()
 
 
@@ -61,26 +63,21 @@ class Seller:
               "penetration" (chases the price, prioritizes winning)
     """
 
-    def __init__(self, name, starting_price, min_margin=0.1, strategy="standard"):
+    def __init__(self, name, starting_price, min_margin=0.1, strategy="standard", lambda_time=0.0):
         self.name = name
         self.current_price = starting_price
         self.min_price = round(starting_price * (1 - min_margin), 8)
         self.strategy = strategy
         self.price_elasticity_belief = STRATEGY_PRICE_ELASTICITY_BELIEF.get(strategy, 5.0)
+        self.lambda_time = lambda_time
 
-    def counter_offer(self, competitor_price):
-        """
-        Evaluates a set of candidate prices (from the current price
-        down to the seller's own minimum) and picks the one with the
-        highest expected value. Only discounts if a candidate price
-        improves on staying put. Returns True if it discounted, False
-        otherwise.
-        """
+    def counter_offer(self, competitor_price, round_number=0):
         if self.current_price <= self.min_price:
-            return False  # already at the minimum, nothing to evaluate
+            return False
 
         current_ev = expected_value(
-            self.current_price, competitor_price, self.min_price, self.price_elasticity_belief
+            self.current_price, competitor_price, self.min_price,
+            self.price_elasticity_belief, round_number, self.lambda_time
         )
 
         best_price = self.current_price
@@ -91,7 +88,8 @@ class Seller:
         for i in range(1, steps + 1):
             candidate = round(self.current_price - price_range * i / steps, 8)
             candidate_ev = expected_value(
-                candidate, competitor_price, self.min_price, self.price_elasticity_belief
+                candidate, competitor_price, self.min_price,
+                self.price_elasticity_belief, round_number, self.lambda_time
             )
             if candidate_ev > best_ev:
                 best_ev = candidate_ev
@@ -125,7 +123,7 @@ def negotiate(sellers, max_rounds=5):
 
         for seller in sellers:
             if seller.current_price > best_price:
-                discounted = seller.counter_offer(best_price)
+                discounted = seller.counter_offer(best_price, round_number=round_num)
                 any_discount = any_discount or discounted
 
         history.append({
@@ -137,8 +135,4 @@ def negotiate(sellers, max_rounds=5):
             break
 
     winner = min(sellers, key=lambda s: s.current_price)
-
-    return {
-        "winner": winner,
-        "history": history,
-    }
+    return {"winner": winner, "history": history}

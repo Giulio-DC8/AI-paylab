@@ -8,11 +8,11 @@ from protocols.mastercardpay.mock import pay as pay_mastercardpay
 from protocols.payforcrawl.mock import pay as pay_payforcrawl
 from protocols.lightning_l402.mock import pay_per_request
 from protocols.web_monetization.mock import pay_stream
+from protocols.api_key_quota.mock import check_access
 from receipt.generator import create_receipt
 from core.router import choose_and_pay, choose_best_offer
 from core.negotiation import Seller, negotiate
 from core.buyer import negotiate_and_choose
-from protocols.api_key_quota.mock import check_access
 
 
 def print_result(result):
@@ -77,6 +77,7 @@ def main():
     negotiate_parser = subparsers.add_parser("negotiate", help="Have multiple sellers negotiate against each other, pick the final lowest price")
     negotiate_parser.add_argument("--sellers", required=True, help="Path to a JSON file with the list of sellers")
     negotiate_parser.add_argument("--max-rounds", type=int, default=5, help="Maximum number of negotiation rounds (default: 5)")
+    negotiate_parser.add_argument("--lambda-time", type=float, default=0.0, help="Cost of waiting per round, proportional to how uncompetitive the price is (default: 0.0 = no time cost)")
 
     buy_parser = subparsers.add_parser("negotiate-and-choose", help="Negotiate across many sellers, then let the AI choose among the finalists")
     buy_parser.add_argument("--sellers", required=True, help="Path to a JSON file with the list of sellers")
@@ -98,7 +99,6 @@ def main():
     apikey_parser.add_argument("--credit-balance", type=float, default=10.0, help="Remaining pre-paid credit")
     apikey_parser.add_argument("--request-cost", type=float, default=0.01, help="Cost of this specific request")
     apikey_parser.add_argument("--rate-limit-remaining", type=int, default=100, help="Remaining requests before rate limit")
-
 
     args = parser.parse_args()
 
@@ -149,38 +149,12 @@ def main():
         else:
             print("--- Offer chosen (lowest total cost) ---")
             print_result(outcome["chosen"])
- 
-    elif args.command == "check-access":
-        result = check_access(
-            merchant=args.merchant,
-            api_key_valid=args.api_key_valid,
-            credit_balance=args.credit_balance,
-            request_cost=args.request_cost,
-            rate_limit_remaining=args.rate_limit_remaining,
-        )
-
-        print(f"Protocol:          {result['protocol']}")
-        print(f"Merchant:          {result['merchant']}")
-        print(f"HTTP Status:       {result['http_status_code']}")
-        print(f"Status:            {result['status']}")
-        if result["reason"]:
-            print(f"Reason:            {result['reason']}")
-        print(f"Request cost:      {result['request_cost']}")
-        print(f"Remaining credit:  {result['remaining_credit']}")
-        print(f"Transaction ID:    {result['transaction_id']}")
-
-        receipt = create_receipt(result)
-        print()
-        print("--- Receipt ---")
-        print(f"Receipt ID:      {receipt['receipt_id']}")
-        print(f"Issued at:       {receipt['issued_at']}")
-        print(f"Signature:       {receipt['signature']}")
 
     elif args.command == "negotiate":
         with open(args.sellers, "r") as f:
             sellers_data = json.load(f)
 
-        sellers = [Seller(**s) for s in sellers_data]
+        sellers = [Seller(lambda_time=args.lambda_time, **s) for s in sellers_data]
         outcome = negotiate(sellers, max_rounds=args.max_rounds)
 
         print("--- Negotiation history ---")
@@ -230,6 +204,32 @@ def main():
             )
 
         print_result(result)
+
+    elif args.command == "check-access":
+        result = check_access(
+            merchant=args.merchant,
+            api_key_valid=args.api_key_valid,
+            credit_balance=args.credit_balance,
+            request_cost=args.request_cost,
+            rate_limit_remaining=args.rate_limit_remaining,
+        )
+
+        print(f"Protocol:          {result['protocol']}")
+        print(f"Merchant:          {result['merchant']}")
+        print(f"HTTP Status:       {result['http_status_code']}")
+        print(f"Status:            {result['status']}")
+        if result["reason"]:
+            print(f"Reason:            {result['reason']}")
+        print(f"Request cost:      {result['request_cost']}")
+        print(f"Remaining credit:  {result['remaining_credit']}")
+        print(f"Transaction ID:    {result['transaction_id']}")
+
+        receipt = create_receipt(result)
+        print()
+        print("--- Receipt ---")
+        print(f"Receipt ID:      {receipt['receipt_id']}")
+        print(f"Issued at:       {receipt['issued_at']}")
+        print(f"Signature:       {receipt['signature']}")
 
     else:
         parser.print_help()
