@@ -7,20 +7,22 @@ Today that usually means API keys, merchant accounts, wallets, and sandbox envir
 ```
 AI Agent
    │
-   ├── Compare/negotiate across multiple sellers
-   │        │
-   │        ▼
-   │   Pick the best offer
-   │        │
-   └── ──── ┤ (or: focus on a single known seller)
-            ▼
-   Choose protocol / check access / per-request billing
-            │
-            ▼
-      Mock payment
-            │
-            ▼
-Signed receipt (Ed25519)
+   ├──────────────┐
+   ▼                   ▼               
+Compare offers   Focus on one seller    
+   │                   │               
+   ▼                   ▼               
+Negotiate      (skip straight to)       
+   │                   │               
+   └──────────────┐
+                        ▼
+     Choose protocol / check access / per-request billing
+                         │
+                         ▼
+                    Mock payment
+                         │
+                         ▼
+                 Signed receipt (Ed25519)
 ```
 
 ## Why this project exists
