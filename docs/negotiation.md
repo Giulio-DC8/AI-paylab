@@ -1,4 +1,4 @@
-# Negotiation engine — the math
+# Negotiation engine 
 
 Sellers don't apply a fixed discount step. At every round, each `Seller` evaluates a range of candidate prices and picks the one that maximizes **expected value**.
 
@@ -73,7 +73,7 @@ At every round, the seller generates 20 candidate prices between its current pri
 
 By default there's no cost to continuing to negotiate. With `lambda_time` ($\lambda$) set above 0:
 
-$$\text{EV}(p, t) = P_{\text{win}}(p) \cdot \text{Margin}(p) \;-\; \lambda \cdot t \cdot \big(1 - P_{\text{win}}(p)\big) \cdot \text{Margin}(p)$$
+$$\text{EV}(p, t) = P_{\text{win}}(p) \cdot \text{Margin}(p) - \lambda \cdot t \cdot \big(1 - P_{\text{win}}(p)\big) \cdot \text{Margin}(p)$$
 
 ```
 EV(price, round) = P_win * margin - lambda_time * round * (1 - P_win) * margin
