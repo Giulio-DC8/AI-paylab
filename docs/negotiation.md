@@ -65,7 +65,7 @@ $$\text{Margin}(p) = p - p_{\min}$$
 margin = price - min_price
 ```
 
-$p_{\min}$ is the seller's floor price, fixed at creation. Not real profit — $p_{\min}$ doesn't represent actual cost, just the seller's walk-away point.
+$p_{\min}$ is the seller's floor price, fixed at creation. Not real profit, $p_{\min}$ doesn't represent actual cost, just the seller's walk-away point.
 
 ## 5. Expected value (base case, no time cost)
 
@@ -93,9 +93,9 @@ where $t$ is the current round number. The penalty term is proportional to **how
 - Price near the competitor's ($P_{\text{win}} \approx 1$) → penalty ≈ 0, costs almost nothing to hold
 - Price far from the market ($P_{\text{win}} \approx 0$) → penalty grows every round, increasingly expensive to maintain
 
-**Why $\lambda=0$ is exactly backward-compatible:** the penalty term is multiplied by $\lambda$, so at $\lambda=0$ it is algebraically zero for every candidate — not just empirically close to the old behavior, but identical by construction.
+**Why $\lambda=0$ is exactly backward-compatible:** the penalty term is multiplied by $\lambda$, so at $\lambda=0$ it is algebraically zero for every candidate, not just empirically close to the old behavior, but identical by construction.
 
-**Why this formulation works** (unlike three earlier attempts that didn't): the penalty depends on $P_{\text{win}}(p)$, which varies per candidate price — so it doesn't scale every option by the same constant. A uniform scaling (tried first) never changes which candidate has the highest value; this formulation can.
+**Why this formulation works** (unlike three earlier attempts that didn't): the penalty depends on $P_{\text{win}}(p)$, which varies per candidate price, so it doesn't scale every option by the same constant. A uniform scaling (tried first) never changes which candidate has the highest value; this formulation can.
 
 ### Observed calibration ($p_{\text{start}}=1000$, $p_{\min}=700$ for competitor, seller starts at 1000 vs. competitor at 700)
 
