@@ -27,9 +27,9 @@ Negotiate             (skip straight to)
 
 ## Why this project exists
 
-While exploring agentic commerce protocols (x402, AP2, MPP, and others), it became clear that everyone was building payment *rails* — but almost nothing existed to prototype the *decision logic* of an agent locally: which seller to pick, how to negotiate, when a discount is actually worth it. `agent-paylab` was built to fill that gap.
+While exploring agentic commerce protocols (x402, AP2, MPP, and others), it became clear that everyone was building payment *rails*, but almost nothing existed to prototype the *decision logic* of an agent locally: which seller to pick, how to negotiate, when a discount is actually worth it. `agent-paylab` was built to fill that gap.
 
-The protocols are the medium. **The real subject is decision intelligence for agentic commerce** — how an agent picks a seller, negotiates, and proves what it decided, independent of which rail eventually moves the money.
+The protocols are the medium. **The real subject is decision intelligence for agentic commerce**, how an agent picks a seller, negotiates, and proves what it decided, independent of which rail eventually moves the money.
 
 ## agent-paylab vs. the real thing
 
@@ -55,9 +55,9 @@ Round 2: {'Lufthansa': 900, 'Emirates': 878.75}
 --- Winner: Emirates at 878.75 ---
 ```
 
-Two sellers, two independent pricing strategies, negotiating by weighing expected value at every candidate price — not a fixed discount step. This is the part most payment protocol demos don't show: not *how* an agent pays, but *how it decides who to pay*. Full math and calibration details: [`docs/negotiation.md`](docs/negotiation.md).
+Two sellers, two independent pricing strategies, negotiating by weighing expected value at every candidate price, not a fixed discount step. This is the part most payment protocol demos don't show: not *how* an agent pays, but *how it decides who to pay*. Full math and calibration details: [`docs/negotiation.md`](docs/negotiation.md).
 
-`agent-paylab` doesn't compete with x402, AP2, MPP, or any other payment protocol — it's a development tool for the logic that decides *before* any of them get called.
+`agent-paylab` doesn't compete with x402, AP2, MPP, or any other payment protocol, it's a development tool for the logic that decides *before* any of them get called.
 
 ## Install
 
@@ -121,24 +121,24 @@ Every payment simulation produces a **receipt signed with Ed25519** (real public
 | `paylab negotiate --sellers file.json [--max-rounds N] [--lambda-time L]` | Run a multi-round negotiation between sellers, each maximizing expected value at every round (default: 5 rounds, no time cost) |
 | `paylab negotiate-and-choose --sellers file.json --preferences "..." [--top-n N] [--max-rounds N]` | Negotiate across all sellers deterministically, then let an LLM choose among the top N finalists based on natural-language preferences |
 | `paylab stream --protocol X --merchant M ...` | Simulate a per-request (Lightning L402) or continuous-streaming (Web Monetization) micropayment |
-| `paylab check-access --merchant M ...` | Check API key/quota access (traditional pre-paid credential model — no real-time negotiation, only a validity/credit check) |
+| `paylab check-access --merchant M ...` | Check API key/quota access (traditional pre-paid credential model, no real-time negotiation, only a validity/credit check) |
 | `paylab negotiate --sellers file.json [--max-rounds N] [--lambda-time L | --urgency patient/moderate/urgent]` | Run a multi-round negotiation between sellers, each maximizing expected value at every round (default: 5 rounds, no time cost) |
 
 ## Negotiation model
 
 Three documents, three roles:
-- [`docs/protocol-spec.md`](docs/protocol-spec.md) — the protocol itself, language-agnostic: Buyer/Seller roles, message flow, properties (floor safety, monotonicity, bounded rounds), convergence, and how future market mechanisms (`ReverseAuctionProtocol`, `EnglishAuctionProtocol`, ...) plug into the same `MarketProtocol` interface.
-- [`docs/negotiation.md`](docs/negotiation.md) — the math: the expected-value formula, why it's a logistic function, how `core/calibration.py` derives the parameters with `scipy.optimize` instead of hand-picking them, the numerical precision bug that surfaced when extending this to rate-based (per-request) negotiation, the optional time-value-of-waiting cost (`--lambda-time` or the `--urgency patient/moderate/urgent` shortcut, settable per-seller in JSON), and two documented edge cases (non-monotonic price, floor saturation) worth knowing before assuming "more urgency = better price."
-- [`docs/benchmarks.md`](docs/benchmarks.md) — reproducible time/memory/round-count measurements from 2 to 350 sellers.
+- [`docs/protocol-spec.md`](docs/protocol-spec.md), the protocol itself, language-agnostic: Buyer/Seller roles, message flow, properties (floor safety, monotonicity, bounded rounds), convergence, and how future market mechanisms (`ReverseAuctionProtocol`, `EnglishAuctionProtocol`, ...) plug into the same `MarketProtocol` interface.
+- [`docs/negotiation.md`](docs/negotiation.md), the math: the expected-value formula, why it's a logistic function, how `core/calibration.py` derives the parameters with `scipy.optimize` instead of hand-picking them, the numerical precision bug that surfaced when extending this to rate-based (per-request) negotiation, the optional time-value-of-waiting cost (`--lambda-time` or the `--urgency patient/moderate/urgent` shortcut, settable per-seller in JSON), and two documented edge cases (non-monotonic price, floor saturation) worth knowing before assuming "more urgency = better price."
+- [`docs/benchmarks.md`](docs/benchmarks.md), reproducible time/memory/round-count measurements from 2 to 350 sellers.
 
 ### Stable API
 
 Besides the CLI, the negotiation engine is usable as a library, at two levels:
-- **Raw**: `from core.negotiation import Seller, negotiate` — the free functions, unchanged since before this API layer existed.
-- **Wrapped**: `from core.market_protocol import NegotiationProtocol` — `NegotiationProtocol().run(sellers, max_rounds=5)` returns a typed `NegotiationResult` (`.winner`, `.history`) instead of a raw dict. This is the reference implementation of `MarketProtocol`, the interface future market mechanisms will share (see `docs/protocol-spec.md` §7).
+- **Raw**: `from core.negotiation import Seller, negotiate`, the free functions, unchanged since before this API layer existed.
+- **Wrapped**: `from core.market_protocol import NegotiationProtocol`, `NegotiationProtocol().run(sellers, max_rounds=5)` returns a typed `NegotiationResult` (`.winner`, `.history`) instead of a raw dict. This is the reference implementation of `MarketProtocol`, the interface future market mechanisms will share (see `docs/protocol-spec.md` §7).
 - Payments are similarly usable as a library via `core.router.simulate(protocol, merchant, amount)` (the same dispatch `paylab simulate` uses) and the AI-assisted buyer via `core.buyer.Buyer(preferences=...).choose(sellers)`.
 
-None of this changes what `negotiate()`, `Seller`, or the CLI already did — it's an additive, typed layer on top.
+None of this changes what `negotiate()`, `Seller`, or the CLI already did, it's an additive, typed layer on top.
 
 ## AI-assisted decisions (experimental)
 
@@ -148,7 +148,7 @@ None of this changes what `negotiate()`, `Seller`, or the CLI already did — it
 
 ## Buyer component
 
-`core/buyer.py`'s `negotiate_and_choose(sellers, buyer_preferences, top_n=5, max_rounds=30)` is meant to be imported directly by developers building their own buyer agent, not just used through the CLI wrapper above. `Buyer` (same module) is a thin stateful wrapper around it — `Buyer(preferences=..., top_n=5, max_rounds=30).choose(sellers)` — for callers who'd rather configure once and call repeatedly. Both inherit the same AI-path limitation: non-deterministic, requires `GEMINI_API_KEY`, not covered by automated tests.
+`core/buyer.py`'s `negotiate_and_choose(sellers, buyer_preferences, top_n=5, max_rounds=30)` is meant to be imported directly by developers building their own buyer agent, not just used through the CLI wrapper above. `Buyer` (same module) is a thin stateful wrapper around it, `Buyer(preferences=..., top_n=5, max_rounds=30).choose(sellers)`, for callers who'd rather configure once and call repeatedly. Both inherit the same AI-path limitation: non-deterministic, requires `GEMINI_API_KEY`, not covered by automated tests.
 
 ## Protocols supported (all mocked)
 
@@ -156,35 +156,35 @@ Six single-transaction ("one-shot") protocols:
 
 | Protocol | What it represents | Notable field |
 |---|---|---|
-| `x402` | Direct payment rail over HTTP 402 (stablecoin-native) | — |
+| `x402` | Direct payment rail over HTTP 402 (stablecoin-native) | ─ |
 | `mpp` | Card/fiat rail with pre-authorized sessions | `currency` |
 | `visatap` | Agent recognition inside the Visa card network | `agent_token` |
 | `mastercardpay` | Agent recognition inside the Mastercard network | `agent_credential` |
-| `payforcrawl` | Cloudflare Pay per Crawl — access to content/resources, not e-commerce | `zone` |
+| `payforcrawl` | Cloudflare Pay per Crawl, access to content/resources, not e-commerce | `zone` |
 | `ap2` | Authorization framework (mandate-based), not an execution rail | `mandate_id` |
 
-Plus two per-unit / continuous-streaming protocols, conceptually different from the six above (no single fixed amount — cost accumulates per request or per second):
+Plus two per-unit / continuous-streaming protocols, conceptually different from the six above (no single fixed amount, cost accumulates per request or per second):
 
 | Protocol | What it represents | Command |
 |---|---|---|
 | `lightning_l402` | Lightning Network L402: per-request micropayments bundling auth + payment via a macaroon token | `paylab stream --protocol lightning_l402 --cost-per-request 0.0001 --request-count 1000` |
 | `web_monetization` | W3C Web Monetization / Interledger Protocol: continuous background payment stream while a resource is consumed | `paylab stream --protocol web_monetization --rate-per-second 0.001 --duration-seconds 30` |
 
-Plus one traditional pre-paid access-control model, conceptually different from both categories above (payment already happened out-of-band — the request only checks validity/credit, it never negotiates or decides anything):
+Plus one traditional pre-paid access-control model, conceptually different from both categories above (payment already happened out-of-band, the request only checks validity/credit, it never negotiates or decides anything):
 
 | Protocol | What it represents | Command |
 |---|---|---|
 | `api_key_quota` | Traditional API Key / OAuth model: account and credit set up beforehand; each request just checks key validity, remaining credit, and rate limits (HTTP 200/401/403/429) | `paylab check-access --merchant WeatherAPI --credit-balance 10.0 --request-cost 0.01` |
 
-**Design note:** every mock captures only the core mechanic of the real protocol it represents, not the full specification. `x402`, `mpp`, `visatap`, `mastercardpay`, and `payforcrawl` are treated here as interchangeable execution rails for simplicity; in reality some of them (e.g. Visa card payments) are implemented as *methods within* MPP rather than fully separate protocols. `ap2` is currently exposed as a peer protocol in `simulate` for consistency, even though conceptually it authorizes a payment rather than executing one — it's excluded from `auto` and `compare` for that reason. `lightning_l402` and `web_monetization` are kept separate from `simulate`/`auto`/`compare`/`negotiate` on purpose: those commands assume a single fixed `amount`, while streaming protocols accumulate cost over requests or time — a genuinely different interface, not just another protocol name. A cleaner `paylab authorize` step for `ap2` is planned (see Roadmap).
+**Design note:** every mock captures only the core mechanic of the real protocol it represents, not the full specification. `x402`, `mpp`, `visatap`, `mastercardpay`, and `payforcrawl` are treated here as interchangeable execution rails for simplicity; in reality some of them (e.g. Visa card payments) are implemented as *methods within* MPP rather than fully separate protocols. `ap2` is currently exposed as a peer protocol in `simulate` for consistency, even though conceptually it authorizes a payment rather than executing one, it's excluded from `auto` and `compare` for that reason. `lightning_l402` and `web_monetization` are kept separate from `simulate`/`auto`/`compare`/`negotiate` on purpose: those commands assume a single fixed `amount`, while streaming protocols accumulate cost over requests or time, a genuinely different interface, not just another protocol name. A cleaner `paylab authorize` step for `ap2` is planned (see Roadmap).
 
 ## Receipts
 
 Every simulated payment, approved or rejected, produces a receipt signed with **Ed25519**:
-- `receipt/generator.py` — `create_receipt()` / `verify_receipt()`
-- `receipt/keys.py` — key generation and loading (auto-generated on first run; raises `IncompleteKeyPairError` if only one of the two key files is present, instead of silently regenerating and invalidating old receipts)
+- `receipt/generator.py`, `create_receipt()` / `verify_receipt()`
+- `receipt/keys.py`, key generation and loading (auto-generated on first run; raises `IncompleteKeyPairError` if only one of the two key files is present, instead of silently regenerating and invalidating old receipts)
 
-The private key (`receipt/private_key.pem`) is generated locally on first use and never leaves your machine — it's excluded from version control via `.gitignore`. Only the public key is needed to verify a receipt.
+The private key (`receipt/private_key.pem`) is generated locally on first use and never leaves your machine, it's excluded from version control via `.gitignore`. Only the public key is needed to verify a receipt.
 
 ## Project structure
 
