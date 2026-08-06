@@ -202,3 +202,49 @@ $$\text{winner} = \arg\min\big(p_A^{(T)},\, p_B^{(T)},\, p_C^{(T)},\, p_D^{(T)}\
 In this scenario, C — which started cheapest and never needed to discount, is very likely to win at 850, unless another seller manages to undercut it.
 
 **The key thing to notice:** every seller runs the *exact same* calculation (steps 2–9), using only its *own* numbers ($p_{\text{current}}$, $p_{\min}$, $s$), nobody ever computes anything "against" a specific named competitor. Everyone computes only against the single number $p_c$ the buyer communicates that round.
+
+
+## Does the lowest minimum price always win?
+
+Short answer: no. A seller's low $p_{\min}$ only translates into a win if its `strategy` (sensitivity $s$) is steep enough to actually chase the gap down. Two experiments, same question, different outcomes.
+
+### Experiment 1 — extreme margin advantage: X wins
+
+| Seller | starting_price | min_margin | $p_{\min}$ | strategy |
+|---|---|---|---|---|
+| X | 1000 | 0.9 | 100 | skimming |
+| Y | 750 | 0.1 | 675 | standard |
+| Z | 800 | 0.15 | 680 | standard |
+| W | 780 | 0.1 | 702 | penetration |
+
+```
+Round 0: X=1000, Y=750, Z=800, W=780
+Round 1: X=595.0, Y=750, Z=752.0, W=744.9
+Round 2: X=595.0, Y=701.25, Z=708.8, W=714.87
+Round 3: X=595.0, Y=701.25, Z=707.36, W=714.87
+Winner: X at 595.0
+```
+
+X's $p_{\min}$ (100) is so far below everyone else's that even skimming's flat probability curve finds it worthwhile to jump straight to 595 in round 1 — the margin available is large enough that a small probability gain still produces a higher $V$ than any cautious alternative. Once at 595, nobody else can get close, so X stops discounting (already near-certain to win) while Y, Z, W settle among themselves.
+
+### Experiment 2 — moderate margin advantage: X loses
+
+Same seller X, but with a much less extreme $p_{\min}$ (660 instead of 100), and Z/W starting more expensive:
+
+| Seller | starting_price | min_margin | $p_{\min}$ | strategy |
+|---|---|---|---|---|
+| X | 1000 | 0.34 | 660.0 | skimming |
+| Y | 750 | 0.1 | 675.0 | standard |
+| Z | 970 | 0.15 | 824.5 | standard |
+| W | 857 | 0.1 | 771.3 | penetration |
+
+```
+Round 0: X=1000, Y=750, Z=970, W=857
+Round 1: X=796.0, Y=750, Z=860.875, W=788.44
+Round 2: X=796.0, Y=750, Z=860.875, W=788.44
+Winner: Y at 750
+```
+
+X still has the lowest $p_{\min}$ (660) of the four, but loses. `skimming`'s flat sensitivity ($s\approx8.11$) means discounting further barely improves win probability — at 796, the marginal probability gain no longer outweighs the margin given up, so X stops well short of its own floor. A large potential margin is necessary but not sufficient: it only gets used if the seller's sensitivity is steep enough to chase it.
+
+**Takeaway:** whether a low $p_{\min}$ turns into a win depends on the interaction between how large the margin advantage is and how steep the seller's strategy curve is — not on $p_{\min}$ alone.
