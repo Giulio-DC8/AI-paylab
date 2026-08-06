@@ -107,7 +107,7 @@ where $t$ is the current round number. The penalty term is proportional to **how
 | 0.10 | 10 | 700.0 |
 | 0.50 | 2 | 700.0 |
 
-**Safety check:** even at $\lambda=0.5$, a seller with $p_{\min}=710$ (unreachable, above the competitor's 700) stops exactly at 710 and never crosses it — the floor constraint holds regardless of time pressure.
+**Safety check:** even at $\lambda=0.5$, a seller with $p_{\min}=710$ (unreachable, above the competitor's 700) stops exactly at 710 and never crosses it, the floor constraint holds regardless of time pressure.
 
 ## 7. Full negotiation loop
 
@@ -131,13 +131,13 @@ winner = seller with lowest final price
 
 ## 8. Rate-based negotiation
 
-The engine is agnostic to what the price represents — the same math works for a total amount (900) or a per-request rate (0.00012), since only the relative gap matters, not the absolute scale.
+The engine is agnostic to what the price represents, the same math works for a total amount (900) or a per-request rate (0.00012), since only the relative gap matters, not the absolute scale.
 
-**Bug found and fixed:** `min_price` and candidate prices were originally rounded to 2 decimal places, which silently collapsed tiny rates to zero (`round(0.00012, 2) == 0.0`), blocking any discount. Fixed by rounding to 8 decimals instead — no change for normal-scale prices.
+**Bug found and fixed:** `min_price` and candidate prices were originally rounded to 2 decimal places, which silently collapsed tiny rates to zero (`round(0.00012, 2) == 0.0`), blocking any discount. Fixed by rounding to 8 decimals instead, no change for normal-scale prices.
 
 ## 9. `--max-rounds` guidance
 
-The default (5) is enough for 2-3 sellers. With more participants — especially several using `penetration` — negotiation may still be actively converging when the round limit cuts it off. Observed: 15 sellers with 5 rounds left two aggressive sellers still chasing each other; raising to 30 rounds showed they stabilize on their own around round 7 — the cutoff, not an unresolved conflict, was the cause.
+The default (5) is enough for 2-3 sellers. With more participants, especially several using `penetration`, negotiation may still be actively converging when the round limit cuts it off. Observed: 15 sellers with 5 rounds left two aggressive sellers still chasing each other; raising to 30 rounds showed they stabilize on their own around round 7, the cutoff, not an unresolved conflict, was the cause.
 
 
 
@@ -158,7 +158,7 @@ Four sellers, `lambda_time=0` (no time cost, for simplicity):
 
 $$p_c^{(1)} = \min(1000, 900, 850, 950) = 850 \quad (\text{C's price})$$
 
-C already has the lowest price, so C does nothing this round. A, B, and D must each react, all against the same $p_c = 850$ — none of them knows this number came from C specifically.
+C already has the lowest price, so C does nothing this round. A, B, and D must each react, all against the same $p_c = 850$, none of them knows this number came from C specifically.
 
 **Round 1, detailed calculation for B** (starting_price=900, $p_{\min}$=810, standard strategy, $s\approx21.97$):
 
@@ -178,7 +178,7 @@ $$\text{gap}(900)\approx0.0588,\quad P_{\text{win}}(900)\approx0.216,\quad \text
 
 $$V(900,\,1) \approx 0.216\times90 \approx 19.44$$
 
-855 beats 900 (21.05 > 19.44). After checking the remaining 19 candidates, suppose the best one lands near 856 — **B discounts to 856**.
+855 beats 900 (21.05 > 19.44). After checking the remaining 19 candidates, suppose the best one lands near 856, **B discounts to 856**.
 
 **Round 1 result (same procedure applied to A and D):**
 
@@ -199,6 +199,6 @@ C remains the target; A, B, D repeat the whole procedure from their new prices, 
 
 $$\text{winner} = \arg\min\big(p_A^{(T)},\, p_B^{(T)},\, p_C^{(T)},\, p_D^{(T)}\big)$$
 
-In this scenario, C — which started cheapest and never needed to discount — is very likely to win at 850, unless another seller manages to undercut it.
+In this scenario, C — which started cheapest and never needed to discount, is very likely to win at 850, unless another seller manages to undercut it.
 
-**The key thing to notice:** every seller runs the *exact same* calculation (steps 2–9), using only its *own* numbers ($p_{\text{current}}$, $p_{\min}$, $s$) — nobody ever computes anything "against" a specific named competitor. Everyone computes only against the single number $p_c$ the buyer communicates that round.
+**The key thing to notice:** every seller runs the *exact same* calculation (steps 2–9), using only its *own* numbers ($p_{\text{current}}$, $p_{\min}$, $s$), nobody ever computes anything "against" a specific named competitor. Everyone computes only against the single number $p_c$ the buyer communicates that round.
