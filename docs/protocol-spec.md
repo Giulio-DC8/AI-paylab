@@ -30,7 +30,7 @@ The Buyer never inspects a Seller's internal state (floor price, strategy, sensi
 
 Responsibilities:
 1. Hold private state: current price, floor price (fixed at creation, see [`negotiation.md` §4](negotiation.md#4-margin)), and a strategy-derived price sensitivity.
-2. On being asked to react to a competitor price, evaluate whether discounting improves its **expected value**, win probability times remaining margin, optionally reduced by a time-cost penalty (see [`negotiation.md` §5–6](negotiation.md#5-expected-value-base-case-no-time-cost)), compared to holding its current price.
+2. On being asked to react to a competitor price, evaluate whether discounting improves its **expected value**, win probability times remaining margin (see [`negotiation.md` §5](negotiation.md#5-expected-value)), compared to holding its current price.
 3. Never propose a price below its own floor, under any pressure.
 4. Report only whether it discounted (a boolean), the Buyer doesn't need or receive the Seller's reasoning.
 
@@ -48,11 +48,11 @@ A Seller's decision is a pure function of its own state and the single competito
         │                       │                       │
         │   1. best_price = min(price across Sellers)   │
         │                       │                       │
-        │      negotiate() calls seller.counter_offer   │
-	│       (best_price, round_number) for every    │ 
-        │     Seller priced above it, best_price is the │ 
-        │     only argument passed, no reference to the │ 
-        │     buyer or other Sellers                    │
+        │   negotiate() calls                           │
+        │   seller.counter_offer(best_price) for every  │
+        │   Seller priced above it, best_price is the   │
+        │   only argument passed, no reference to the   │
+        │   buyer or other Sellers                      │
         │            │          │          │            │
         │            ▼          ▼          ▼            │
         │       ┌────────┐ ┌────────┐ ┌────────┐        │
@@ -87,7 +87,7 @@ function negotiate(sellers, max_rounds):
 
         for seller in sellers:
             if seller.current_price > best_price:
-                discounted = seller.counter_offer(best_price, round=t)
+                discounted = seller.counter_offer(best_price)
                 any_discount = any_discount or discounted
 
         history.append(record(round=t, prices=current price of every seller))
@@ -98,15 +98,15 @@ function negotiate(sellers, max_rounds):
     winner = seller with minimum current_price
     return { winner, history }
 
-function seller.counter_offer(competitor_price, round):
+function seller.counter_offer(competitor_price):
     if current_price <= min_price:
         return false   # already at the floor, nothing to evaluate
 
     best_price = current_price
-    best_value = expected_value(current_price, competitor_price, round)
+    best_value = expected_value(current_price, competitor_price)
 
     for each of 20 candidate prices between current_price and min_price:
-        value = expected_value(candidate, competitor_price, round)
+        value = expected_value(candidate, competitor_price)
         if value > best_value:
             best_value, best_price = value, candidate
 
@@ -116,13 +116,13 @@ function seller.counter_offer(competitor_price, round):
     return false
 ```
 
-`expected_value(price, competitor_price, round)` is the economic core of the protocol,see [`negotiation.md`](negotiation.md) for its exact formula, the logistic win-probability model behind it, and how the per-strategy sensitivity is calibrated.
+`expected_value(price, competitor_price)` is the economic core of the protocol,see [`negotiation.md`](negotiation.md) for its exact formula, the logistic win-probability model behind it, and how the per-strategy sensitivity is calibrated.
 
 ## 5. Properties
 
 These hold for every implementation of this protocol, by construction of the loop above,not just empirically observed in the reference implementation:
 
-- **Floor safety.** No Seller's price is ever set below its own `min_price` in any round, regardless of competition or time pressure. Candidate prices are only ever generated in the closed range `[min_price, current_price]`.
+- **Floor safety.** No Seller's price is ever set below its own `min_price` in any round, regardless of competitive pressure. Candidate prices are only ever generated in the closed range `[min_price, current_price]`.
 - **Monotonicity.** A Seller's price never increases during a negotiation, it only ever holds or decreases.
 - **Bounded rounds.** The loop runs at most `max_rounds` rounds; it may terminate earlier if a full round produces no discounts.
 - **Independence.** A Seller's decision each round depends only on its own state and the single `competitor_price` value it receives that round, never on any other Seller's identity or on which Seller currently holds `best_price`.
@@ -133,7 +133,7 @@ These hold for every implementation of this protocol, by construction of the loo
 
 "Convergence" here means the loop reaches the early-exit condition (a full round with no discounts) before exhausting `max_rounds`.
 
-- Convergence is **not guaranteed for every parameter combination**, it depends on the interaction between how much margin advantage a Seller has and how steeply its strategy reacts to price gaps (see [`negotiation.md`](negotiation.md)'s two side-by-side experiments where an identical floor-price advantage produces a win in one configuration and a loss in another). A documented case (time-cost penalty with a very small `lambda_time`) fails to converge within 30 rounds in the reference implementation.
+- Convergence is **not guaranteed for every parameter combination**, it depends on the interaction between how much margin advantage a Seller has and how steeply its strategy reacts to price gaps (see [`negotiation.md`](negotiation.md)'s two side-by-side experiments where an identical floor-price advantage produces a win in one configuration and a loss in another).
 - Convergence **has been empirically observed** at the scales this project has tested: 2, 15, and 350 Sellers, and is exercised directly by `tests/test_negotiation.py`'s convergence and hundred-Seller tests (`test_negotiation_converges_for_random_seller_pools`, `test_negotiate_scales_to_hundreds_of_sellers`) and by the reproducible measurements in [`benchmarks.md`](benchmarks.md).
 - A caller that needs a hard guarantee should choose `max_rounds` generously and treat "still discounting when the budget runs out" as a valid, observable outcome, not an error, the loop always terminates (it's bounded by construction), it just may terminate without every Seller having settled.
 

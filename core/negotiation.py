@@ -27,29 +27,18 @@ def estimate_win_probability(price, competitor_price, sensitivity=5.0):
     return 1 / (1 + math.exp(exponent))
 
 
-def expected_value(price, competitor_price, min_price, sensitivity, round_number=0, lambda_time=0.0):
+def expected_value(price, competitor_price, min_price, sensitivity):
     """
-    EV(p, t) = [P_win(p) * Margin(p)]  -  [lambda * t * (1 - P_win(p)) * Margin(p)]
-                ^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                   utile atteso           costo di rimanere fuori mercato al round t
+    V(p) = P_win(p) * Margin(p)
 
-    The second term is NOT a generic time cost - it's the cost of
-    staying at an uncompetitive price for another round. It grows
-    with how many rounds have passed (t) AND with how uncompetitive
-    the price currently is (1 - P_win): a price close to the
-    competitor's (P_win near 1) costs almost nothing to hold each
-    round; a price far from the market (P_win near 0) becomes
-    increasingly costly to maintain round after round.
-
-    At lambda_time=0.0 (default), the second term is always exactly
-    zero - identical to the original no-time-cost behavior, by
-    construction (not just approximately).
+    Expected value of offering a given price: probability of winning
+    at that price, multiplied by the remaining margin (how far above
+    the seller's own minimum acceptable price - not real profit,
+    since min_price doesn't represent actual cost).
     """
     probability = estimate_win_probability(price, competitor_price, sensitivity)
     margin = price - min_price
-    base_ev = probability * margin
-    time_cost = lambda_time * round_number * (1 - probability) * margin
-    return base_ev - time_cost
+    return probability * margin
 
 STRATEGY_PRICE_ELASTICITY_BELIEF = calibrate_strategies()
 
@@ -66,21 +55,19 @@ class Seller:
               "penetration" (chases the price, prioritizes winning)
     """
 
-    def __init__(self, name, starting_price, min_margin=0.1, strategy="standard", lambda_time=0.0):
+    def __init__(self, name, starting_price, min_margin=0.1, strategy="standard"):
         self.name = name
         self.current_price = starting_price
         self.min_price = round(starting_price * (1 - min_margin), 8)
         self.strategy = strategy
         self.price_elasticity_belief = STRATEGY_PRICE_ELASTICITY_BELIEF.get(strategy, 5.0)
-        self.lambda_time = lambda_time
 
-    def counter_offer(self, competitor_price, round_number=0):
+    def counter_offer(self, competitor_price):
         if self.current_price <= self.min_price:
             return False
 
         current_ev = expected_value(
-            self.current_price, competitor_price, self.min_price,
-            self.price_elasticity_belief, round_number, self.lambda_time
+            self.current_price, competitor_price, self.min_price, self.price_elasticity_belief
         )
 
         best_price = self.current_price
@@ -91,8 +78,7 @@ class Seller:
         for i in range(1, steps + 1):
             candidate = round(self.current_price - price_range * i / steps, 8)
             candidate_ev = expected_value(
-                candidate, competitor_price, self.min_price,
-                self.price_elasticity_belief, round_number, self.lambda_time
+                candidate, competitor_price, self.min_price, self.price_elasticity_belief
             )
             if candidate_ev > best_ev:
                 best_ev = candidate_ev
@@ -126,7 +112,7 @@ def negotiate(sellers, max_rounds=5):
 
         for seller in sellers:
             if seller.current_price > best_price:
-                discounted = seller.counter_offer(best_price, round_number=round_num)
+                discounted = seller.counter_offer(best_price)
                 any_discount = any_discount or discounted
 
         history.append({

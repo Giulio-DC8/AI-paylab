@@ -60,7 +60,7 @@ $$p_{\min} = p_{\text{start}} \cdot (1 - \text{margin}_{\min})$$
 
 min_price = starting_price * (1 - min_margin)
 
-Fixed once, at `Seller` creation - never recalculated during the negotiation. `min_margin` represents the maximum discount the seller (or its owner) is willing to concede from the listed starting price, decided before the negotiation begins. It is an exogenous constraint, not something derived from probability or expected value: whatever pressure the negotiation applies (competition, time cost via `lambda_time`), the seller never crosses this floor - verified explicitly by `test_seller_never_discounts_below_min_price` and `test_lambda_time_never_crosses_minimum_price`.
+Fixed once, at `Seller` creation - never recalculated during the negotiation. `min_margin` represents the maximum discount the seller (or its owner) is willing to concede from the listed starting price, decided before the negotiation begins. It is an exogenous constraint, not something derived from probability or expected value: whatever competitive pressure the negotiation applies, the seller never crosses this floor - verified explicitly by `test_seller_never_discounts_below_min_price`.
 
 $$\text{Margin}(p) = p - p_{\min}$$
 
@@ -70,7 +70,7 @@ margin = price - min_price
 
 $p_{\min}$ is the seller's floor price, fixed at creation. Not real profit, $p_{\min}$ doesn't represent actual cost, just the seller's walk-away point.
 
-## 5. Expected value (base case, no time cost)
+## 5. Expected value
 
 $$\text{EV}(p) = P_{\text{win}}(p) \cdot \text{Margin}(p)$$
 
@@ -80,38 +80,7 @@ EV(price) = P_win(price) * margin(price)
 
 At every round, the seller generates 20 candidate prices between its current price and $p_{\min}$, computes $\text{EV}$ for each plus the "stay put" option, and picks the maximum.
 
-## 6. Time-value of waiting (optional)
-
-By default there's no cost to continuing to negotiate. With `lambda_time` ($\lambda$) set above 0:
-
-$$\underbrace{\text{EV}(p, t)}_{\text{Expected Value}} = \underbrace{P_{\text{win}}(p) \cdot \text{Margin}(p)}_{\text{Expected Negotiation Value}} - \underbrace{\lambda \cdot t \cdot \big(1 - P_{\text{win}}(p)\big) \cdot \text{Margin}(p)}_{\text{Cost of Remaining Out of the Market } t}$$
-
-```
-EV(price, round) = [P_win * margin]              <- Expected Negotiation Value
-                 - [lambda_time * round * (1 - P_win) * margin]   <- Cost of Remaining Out of the Market t
-```
-
-where $t$ is the current round number. The penalty term is proportional to **how far the price is from the market** ($1-P_{\text{win}}$), not to time alone:
-
-- Price near the competitor's ($P_{\text{win}} \approx 1$) → penalty ≈ 0, costs almost nothing to hold
-- Price far from the market ($P_{\text{win}} \approx 0$) → penalty grows every round, increasingly expensive to maintain
-
-**Why $\lambda=0$ is exactly backward-compatible:** the penalty term is multiplied by $\lambda$, so at $\lambda=0$ it is algebraically zero for every candidate, not just empirically close to the old behavior, but identical by construction.
-
-**Why this formulation works** (unlike three earlier attempts that didn't): the penalty depends on $P_{\text{win}}(p)$, which varies per candidate price, so it doesn't scale every option by the same constant. A uniform scaling (tried first) never changes which candidate has the highest value; this formulation can.
-
-### Observed calibration ($p_{\text{start}}=1000$, $p_{\min}=700$ for competitor, seller starts at 1000 vs. competitor at 700)
-
-| $\lambda$ | Rounds to converge | Final price |
-|---|---|---|
-| 0.02 | doesn't converge in 30 rounds | ~721 (still discounting) |
-| 0.05 | 20 | 700.0 |
-| 0.10 | 10 | 700.0 |
-| 0.50 | 2 | 700.0 |
-
-**Safety check:** even at $\lambda=0.5$, a seller with $p_{\min}=710$ (unreachable, above the competitor's 700) stops exactly at 710 and never crosses it, the floor constraint holds regardless of time pressure.
-
-## 7. Full negotiation loop
+## 6. Full negotiation loop
 
 ```
 history[0] = starting prices
@@ -121,9 +90,9 @@ for round t = 1 to max_rounds:
     any_discount = False
 
     for each seller with price > best_price:
-        seller.counter_offer(best_price, round_number=t)
+        seller.counter_offer(best_price)
         # picks argmax over 20 candidates + "stay put",
-        # using EV(p, t) from section 5 or 6
+        # using EV(p) from section 5
 
     record history[t]
     if no seller discounted this round: break
@@ -131,13 +100,13 @@ for round t = 1 to max_rounds:
 winner = seller with lowest final price
 ```
 
-## 8. Rate-based negotiation
+## 7. Rate-based negotiation
 
 The engine is agnostic to what the price represents, the same math works for a total amount (900) or a per-request rate (0.00012), since only the relative gap matters, not the absolute scale.
 
 **Bug found and fixed:** `min_price` and candidate prices were originally rounded to 2 decimal places, which silently collapsed tiny rates to zero (`round(0.00012, 2) == 0.0`), blocking any discount. Fixed by rounding to 8 decimals instead, no change for normal-scale prices.
 
-## 9. `--max-rounds` guidance
+## 8. `--max-rounds` guidance
 
 The default (5) is enough for 2-3 sellers. With more participants, especially several using `penetration`, negotiation may still be actively converging when the round limit cuts it off. Observed: 15 sellers with 5 rounds left two aggressive sellers still chasing each other; raising to 30 rounds showed they stabilize on their own around round 7, the cutoff, not an unresolved conflict, was the cause.
 
@@ -145,7 +114,7 @@ The default (5) is enough for 2-3 sellers. With more participants, especially se
 
 ## Worked example: 4 sellers, round by round
 
-Four sellers, `lambda_time=0` (no time cost, for simplicity):
+Four sellers:
 
 | Seller | starting_price | min_margin | $p_{\min}$ | strategy |
 |---|---|---|---|---|
@@ -172,13 +141,13 @@ $$P_{\text{win}}(855) = \frac{1}{1+e^{21.97\times0.00588}} \approx 0.468$$
 
 $$\text{Margin}(855) = 855-810 = 45$$
 
-$$V(855,\,1) = 0.468 \times 45 \approx 21.05 \quad (\lambda=0,\text{ so no time-cost term})$$
+$$V(855) = 0.468 \times 45 \approx 21.05$$
 
 Compared to staying put at 900:
 
 $$\text{gap}(900)\approx0.0588,\quad P_{\text{win}}(900)\approx0.216,\quad \text{Margin}(900)=90$$
 
-$$V(900,\,1) \approx 0.216\times90 \approx 19.44$$
+$$V(900) \approx 0.216\times90 \approx 19.44$$
 
 855 beats 900 (21.05 > 19.44). After checking the remaining 19 candidates, suppose the best one lands near 856, **B discounts to 856**.
 
@@ -195,7 +164,7 @@ $$V(900,\,1) \approx 0.216\times90 \approx 19.44$$
 
 $$p_c^{(2)} = \min(960, 856, 850, 870) = 850 \quad (\text{still C})$$
 
-C remains the target; A, B, D repeat the whole procedure from their new prices, now with $t=2$.
+C remains the target; A, B, D repeat the whole procedure from their new prices.
 
 **The loop continues** until nobody discounts in an entire round, then:
 
@@ -250,34 +219,3 @@ Winner: Y at 750
 X still has the lowest $p_{\min}$ (660) of the four, but loses. `skimming`'s flat sensitivity ($s\approx8.11$) means discounting further barely improves win probability,at 796, the marginal probability gain no longer outweighs the margin given up, so X stops well short of its own floor. A large potential margin is necessary but not sufficient: it only gets used if the seller's sensitivity is steep enough to chase it.
 
 **Takeaway:** whether a low $p_{\min}$ turns into a win depends on the interaction between how large the margin advantage is and how steep the seller's strategy curve is,not on $p_{\min}$ alone.
-
-## Is higher lambda_time always better for the buyer?
-
-Two real phenomena worth knowing before choosing a `lambda_time` value,neither is a bug, both are consequences of how the algorithm works.
-
-### Phenomenon 1,non-monotonic price (15 sellers)
-
-| lambda_time | Final price | Rounds |
-|---|---|---|
-| 0.0 | 814.14 | 7 |
-| 0.1 | 782.37 | 11 |
-| 0.5 | 766.22 | 6 |
-| 0.7 | **765.00** | 6 |
-| 0.8 | **779.85** | 5 |
-
-Price generally improves as `lambda_time` rises,but not always. Between 0.7 and 0.8 it gets *worse* (765.00 → 779.85). The negotiation loop stops as soon as *no* seller discounts in an entire round,with higher `lambda_time`, every seller (not just the one you're tracking) feels stronger pressure to settle, so competitors can hit their own floor or local optimum one round sooner, cutting the loop short before the seller you're watching would have discounted further at a slightly lower `lambda_time`.
-
-### Phenomenon 2,saturation at the seller's floor (350 sellers)
-
-| lambda_time | Winner | Final price | Rounds |
-|---|---|---|---|
-| 0.0 | Seller_341 | 690.44 | 10 |
-| 0.1 | Seller_075 | 648.096 | 13 |
-| 0.5 | Seller_075 | 648.096 | 6 |
-| 0.7–1.0 | Seller_075 | 648.096 (identical) | 5 |
-
-From `lambda_time=0.1` onward, the final price is **exactly identical**,648.096, matching Seller_075's own `min_price` exactly (`starting_price=810.12, min_margin=0.2` → `810.12×0.8=648.096`). Once a seller hits its own floor, no amount of additional `lambda_time` can push it lower,it simply has no margin left to give. Beyond that point, raising `lambda_time` only speeds up *how many rounds it takes to get there*, not *where it ends up*.
-
-### Takeaway
-
-`lambda_time` reliably makes negotiations converge faster, and *usually*,but not always,produces a better price for the buyer. Two failure modes to be aware of: (1) an overly high value can make the loop stop early because *other* sellers settle first, occasionally locking in a worse price than a slightly lower value would have; (2) once the winning seller reaches its own floor, further increases only save rounds, not money. Neither invalidates `lambda_time` as a tool,but "urgent = always better price" would be an overpromise a tiered convenience layer (e.g. `--urgency`) should not make.

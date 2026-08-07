@@ -118,17 +118,16 @@ Every payment simulation produces a **receipt signed with Ed25519** (real public
 | `paylab simulate --protocol X --merchant M --amount N` | Simulate a single payment on the protocol you choose |
 | `paylab auto --merchant M --amount N` | Try all execution protocols, pick the one with the lowest fee |
 | `paylab compare --offers file.json` | Compare multiple seller/protocol offers, pick the lowest total cost (price + fee) |
-| `paylab negotiate --sellers file.json [--max-rounds N] [--lambda-time L]` | Run a multi-round negotiation between sellers, each maximizing expected value at every round (default: 5 rounds, no time cost) |
+| `paylab negotiate --sellers file.json [--max-rounds N]` | Run a multi-round negotiation between sellers, each maximizing expected value at every round (default: 5 rounds) |
 | `paylab negotiate-and-choose --sellers file.json --preferences "..." [--top-n N] [--max-rounds N]` | Negotiate across all sellers deterministically, then let an LLM choose among the top N finalists based on natural-language preferences |
 | `paylab stream --protocol X --merchant M ...` | Simulate a per-request (Lightning L402) or continuous-streaming (Web Monetization) micropayment |
 | `paylab check-access --merchant M ...` | Check API key/quota access (traditional pre-paid credential model, no real-time negotiation, only a validity/credit check) |
-| `paylab negotiate --sellers file.json [--max-rounds N] [--lambda-time L | --urgency patient/moderate/urgent]` | Run a multi-round negotiation between sellers, each maximizing expected value at every round (default: 5 rounds, no time cost) |
 
 ## Negotiation model
 
 Three documents, three roles:
 - [`docs/protocol-spec.md`](docs/protocol-spec.md), the protocol itself, language-agnostic: Buyer/Seller roles, message flow, properties (floor safety, monotonicity, bounded rounds), convergence, and how future market mechanisms (`ReverseAuctionProtocol`, `EnglishAuctionProtocol`, ...) plug into the same `MarketProtocol` interface.
-- [`docs/negotiation.md`](docs/negotiation.md), the math: the expected-value formula, why it's a logistic function, how `core/calibration.py` derives the parameters with `scipy.optimize` instead of hand-picking them, the numerical precision bug that surfaced when extending this to rate-based (per-request) negotiation, the optional time-value-of-waiting cost (`--lambda-time` or the `--urgency patient/moderate/urgent` shortcut, settable per-seller in JSON), and two documented edge cases (non-monotonic price, floor saturation) worth knowing before assuming "more urgency = better price."
+- [`docs/negotiation.md`](docs/negotiation.md), the math: the expected-value formula, why it's a logistic function, how `core/calibration.py` derives the parameters with `scipy.optimize` instead of hand-picking them, and the numerical precision bug that surfaced when extending this to rate-based (per-request) negotiation.
 - [`docs/benchmarks.md`](docs/benchmarks.md), reproducible time/memory/round-count measurements from 2 to 350 sellers.
 
 ### Stable API
@@ -219,8 +218,7 @@ agent-paylab/
 │   ├── test_router.py              # protocol selection, offer comparison, error handling
 │   ├── test_rate_negotiation.py    # negotiation engine at per-request/per-second rate scale
 │   ├── test_streaming_protocols.py # lightning_l402, web_monetization
-│   ├── test_api_key_quota.py       # api_key_quota (HTTP 200/401/403/429)
-│   └── test_time_cost.py           # time-discounted negotiation (lambda_time)
+│   └── test_api_key_quota.py       # api_key_quota (HTTP 200/401/403/429)
 ├── examples/
 │   ├── generate_sellers.py   # generate random seller pools for scale testing
 │   └── ai_demo.py            # standalone ai_agent.py demo
@@ -239,7 +237,7 @@ pip install -e ".[dev]"
 pytest tests/ -v
 ```
 
-35 tests covering receipt signing, the expected-value negotiation engine, parameter calibration, protocol routing/error handling, per-unit/streaming payments, rate-based negotiation, traditional API key/quota access control, time-cost-based negotiation, urgency profiles, and the stable NegotiationProtocol/Buyer/simulate() API surface.
+30 tests covering receipt signing, the expected-value negotiation engine and its protocol invariants (floor safety, convergence, single-seller no-op, hundreds-of-sellers scale), parameter calibration, protocol routing/error handling, the `NegotiationProtocol`/`simulate()` wrapper layer, per-unit/streaming payments, rate-based negotiation, and traditional API key/quota access control.
 
 ## Roadmap
 
